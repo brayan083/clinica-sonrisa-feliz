@@ -10,16 +10,12 @@ import java.util.Objects;
  *
  * La identidad del paciente se define por su DNI (único en el sistema).
  */
-public class Paciente {
+public class Paciente extends Persona {
 
     /** Contador estático para autogenerar IDs únicos y crecientes. */
     private static long contadorId = 1;
 
-    private final Long id;
-    private String    nombre;
-    private String    apellido;
     private String    dni;
-    private String    email;
     private LocalDate fechaIngreso;
     private Domicilio domicilio;
 
@@ -31,11 +27,8 @@ public class Paciente {
      */
     public Paciente(String nombre, String apellido, String dni,
                     String email, Domicilio domicilio) {
-        this.id           = contadorId++;
-        this.nombre       = nombre;
-        this.apellido     = apellido;
+        super(contadorId++, nombre, apellido, email);
         this.dni          = dni;
-        this.email        = email;
         this.domicilio    = domicilio;
         this.fechaIngreso = LocalDate.now();
     }
@@ -46,31 +39,16 @@ public class Paciente {
      */
     public Paciente(String nombre, String apellido, String dni,
                     String email, LocalDate fechaIngreso, Domicilio domicilio) {
-        this.id           = contadorId++;
-        this.nombre       = nombre;
-        this.apellido     = apellido;
+        super(contadorId++, nombre, apellido, email);
         this.dni          = dni;
-        this.email        = email;
         this.fechaIngreso = fechaIngreso;
         this.domicilio    = domicilio;
     }
 
-    // ── Getters ────────────────────────────────────────────────
-    // El ID no tiene setter: se genera automáticamente y nunca debe cambiar.
-
-    public Long getId() { return id; }
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido; }
+    // ── Getters / Setters ──────────────────────────────────────
 
     public String getDni() { return dni; }
     public void setDni(String dni) { this.dni = dni; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
 
     public LocalDate getFechaIngreso() { return fechaIngreso; }
     public void setFechaIngreso(LocalDate fechaIngreso) { this.fechaIngreso = fechaIngreso; }
@@ -80,9 +58,7 @@ public class Paciente {
 
     // ── Métodos de negocio ─────────────────────────────────────
 
-    /**
-     * Devuelve el nombre completo: "nombre apellido".
-     */
+    @Override
     public String getNombreCompleto() {
         return nombre + " " + apellido;
     }

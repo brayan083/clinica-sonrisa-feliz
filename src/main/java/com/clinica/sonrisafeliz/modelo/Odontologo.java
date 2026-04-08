@@ -7,47 +7,28 @@ import java.util.Objects;
  * La matrícula es su dato clave de auditoría y habilitación profesional,
  * y es única en el sistema.
  */
-public class Odontologo {
+public class Odontologo extends Persona {
 
     /** Contador estático para autogenerar IDs únicos y crecientes. */
     private static long contadorId = 1;
 
-    private final Long id;
-    private String nombre;
-    private String apellido;
     private String matricula;
 
-    // ── Constructores ──────────────────────────────────────────
+    // ── Constructor ────────────────────────────────────────────
 
-    /**
-     * Constructor principal. El ID se genera automáticamente.
-     */
-    public Odontologo(String nombre, String apellido, String matricula) {
-        this.id        = contadorId++;
-        this.nombre    = nombre;
-        this.apellido  = apellido;
+    public Odontologo(String nombre, String apellido, String email, String matricula) {
+        super(contadorId++, nombre, apellido, email);
         this.matricula = matricula;
     }
 
-    // ── Getters ────────────────────────────────────────────────
-    // El ID no tiene setter: se genera automáticamente y nunca debe cambiar.
-
-    public Long getId() { return id; }
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido; }
+    // ── Getters / Setters ──────────────────────────────────────
 
     public String getMatricula() { return matricula; }
     public void setMatricula(String matricula) { this.matricula = matricula; }
 
     // ── Métodos de negocio ─────────────────────────────────────
 
-    /**
-     * Devuelve el nombre completo: "nombre apellido".
-     */
+    @Override
     public String getNombreCompleto() {
         return nombre + " " + apellido;
     }
