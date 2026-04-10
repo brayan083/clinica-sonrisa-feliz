@@ -2,45 +2,30 @@ package com.clinica.sonrisafeliz.modelo;
 
 import java.util.Objects;
 
-/**
- * Representa a un profesional odontológico habilitado para atender pacientes.
- * La matrícula es su dato clave de auditoría y habilitación profesional,
- * y es única en el sistema.
- */
-public class Odontologo extends Persona {
-
-    /** Contador estático para autogenerar IDs únicos y crecientes. */
-    private static long contadorId = 1;
-
+public class Odontologo extends Persona{
     private String matricula;
-
-    // ── Constructor ────────────────────────────────────────────
-
-    public Odontologo(String nombre, String apellido, String email, String matricula) {
-        super(contadorId++, nombre, apellido, email);
-        this.matricula = matricula;
+    private Agenda agenda;
+    
+    public Odontologo() {
+        super();
+        this.agenda = new Agenda();
     }
-
-    // ── Getters / Setters ──────────────────────────────────────
+    
+    public Odontologo(String nombre, String apellido, String email, String matricula) {
+        super(nombre, apellido, email);
+        this.matricula = matricula;
+        this.agenda = new Agenda();
+    }
 
     public String getMatricula() { return matricula; }
     public void setMatricula(String matricula) { this.matricula = matricula; }
+    public Agenda getAgenda() { return agenda; }
+    public void setAgenda(Agenda agenda) { this.agenda = agenda; }
 
-    // ── Métodos de negocio ─────────────────────────────────────
-
-    @Override
-    public String getNombreCompleto() {
-        return nombre + " " + apellido;
-    }
-
-    /**
-     * Dos odontólogos son iguales si tienen la misma matrícula.
-     * La matrícula es la identidad de negocio del profesional.
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Odontologo)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Odontologo that = (Odontologo) o;
         return Objects.equals(matricula, that.matricula);
     }
@@ -52,9 +37,8 @@ public class Odontologo extends Persona {
 
     @Override
     public String toString() {
-        return "Odontologo{" +
-                "id=" + id +
-                ", nombre='" + getNombreCompleto() + '\'' +
+        return "Odontólogo{" +
+                "Dr/Dra.='" + getNombreCompleto() + '\'' +
                 ", matricula='" + matricula + '\'' +
                 '}';
     }
