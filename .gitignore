@@ -1,0 +1,7 @@
+target/
+**/target/
+.idea/
+*.class
+*.jar
+.vscode/
+clinica-sonrisa-feliz/
