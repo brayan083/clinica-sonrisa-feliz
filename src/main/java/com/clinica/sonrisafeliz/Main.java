@@ -25,7 +25,7 @@ public class Main {
 
         System.out.println("--- REGISTRO DE PACIENTE ---");
         // 4. Marta registra un domicilio y un paciente
-        Domicilio domJuan = new Domicilio("Av. Siempreviva", 742, "Springfield", "Buenos Aires");
+        Domicilio domJuan = new Domicilio("Av. Siempreviva", "742", "Springfield", "Buenos Aires");
         Paciente pacienteJuan = marta.registrarPaciente("Juan", "Topo", "juan@mail.com", "12345678", domJuan);
         System.out.println(pacienteJuan.toString() + "\n");
 
@@ -45,7 +45,7 @@ public class Main {
         System.out.println("--- PRUEBA DE RESTRICCIÓN DE AGENDA ---");
         // 6. Probamos qué pasa si creamos otro paciente e intentamos meterlo a la misma hora
         Paciente pacienteMaria = marta.registrarPaciente("María", "López", "maria@mail.com", "87654321", domJuan);
-        Turno turnoFallido = marta.asignarTurno(pacienteMaria, drPerez, fechaTurno, horaTurno);
+        marta.asignarTurno(pacienteMaria, drPerez, fechaTurno, horaTurno);
         System.out.println("\n");
 
         System.out.println("--- MODIFICACIÓN Y CANCELACIÓN ---");

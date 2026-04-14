@@ -6,11 +6,6 @@ public class Odontologo extends Persona{
     private String matricula;
     private Agenda agenda;
     
-    public Odontologo() {
-        super();
-        this.agenda = new Agenda();
-    }
-    
     public Odontologo(String nombre, String apellido, String email, String matricula) {
         super(nombre, apellido, email);
         this.matricula = matricula;

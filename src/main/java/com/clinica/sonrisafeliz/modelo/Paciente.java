@@ -8,9 +8,7 @@ public class Paciente extends Persona{
     private LocalDate fechaIngreso;
     private Domicilio domicilio;
 
-    public Paciente() { super();}
-
-    public Paciente(String nombre, String apellido, String email, String dni, LocalDate fechaIngreso, Domicilio domicilio) {
+    public Paciente(String nombre, String apellido, String email, String dni, Domicilio domicilio) {
         super(nombre, apellido, email);
         this.dni = dni;
         this.domicilio = domicilio;

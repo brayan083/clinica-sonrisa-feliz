@@ -9,7 +9,6 @@ import java.util.Objects;
 public class Recepcionista extends Persona{
     private String legajo;
 
-    public Recepcionista() { super();}
     public Recepcionista(String nombre, String apellido, String email, String legajo) {
         super(nombre, apellido, email);
         this.legajo = legajo;
@@ -21,7 +20,7 @@ public class Recepcionista extends Persona{
 
     public Paciente registrarPaciente(String nombre, String apellido, String email, String dni, Domicilio domicilio) {
         System.out.println("Recepcionista " + this.getNombre() + ": Registrando paciente " + nombre + "...");
-        return new Paciente(nombre, apellido, email, dni, java.time.LocalDate.now(), domicilio);
+        return new Paciente(nombre, apellido, email, dni, domicilio);
     }
 
     public Turno asignarTurno(Paciente paciente, Odontologo odontologo, LocalDate fecha, LocalTime hora) {
