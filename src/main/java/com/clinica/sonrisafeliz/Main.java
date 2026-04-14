@@ -45,19 +45,24 @@ public class Main {
         System.out.println("--- PRUEBA DE RESTRICCIÓN DE AGENDA ---");
         // 6. Probamos qué pasa si creamos otro paciente e intentamos meterlo a la misma hora
         Paciente pacienteMaria = marta.registrarPaciente("María", "López", "maria@mail.com", "87654321", domJuan);
-        marta.asignarTurno(pacienteMaria, drPerez, fechaTurno, horaTurno);
-        System.out.println("\n");
+        Turno turnoFallido = marta.asignarTurno(pacienteMaria, drPerez, fechaTurno, horaTurno);
+        if (turnoFallido != null) {
+            historialGeneralTurnos.add(turnoFallido);
+        }
+        System.out.println();
 
         System.out.println("--- MODIFICACIÓN Y CANCELACIÓN ---");
         // 7. Marta cancela el turno de Juan porque se enfermó
-        marta.cancelarTurno(turnoJuan);
-        System.out.println("Estado actual del turno de Juan: " + turnoJuan.getEstado());
-
         // 8. Como el turno de Juan se canceló, ahora ese horario DEBERÍA estar libre para María
-        System.out.println("\nReintentando turno para María en el mismo horario...");
-        Turno turnoMaria = marta.asignarTurno(pacienteMaria, drPerez, fechaTurno, horaTurno);
-        if(turnoMaria != null) {
-            historialGeneralTurnos.add(turnoMaria);
+        if (turnoJuan != null) {
+            marta.cancelarTurno(turnoJuan);
+            System.out.println("Estado actual del turno de Juan: " + turnoJuan.getEstado());
+
+            System.out.println("\nReintentando turno para María en el mismo horario...");
+            Turno turnoMaria = marta.asignarTurno(pacienteMaria, drPerez, fechaTurno, horaTurno);
+            if (turnoMaria != null) {
+                historialGeneralTurnos.add(turnoMaria);
+            }
         }
 
         System.out.println("\n=== FIN DE LA DEMO ===");
