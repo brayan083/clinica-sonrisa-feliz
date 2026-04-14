@@ -1,10 +1,10 @@
 package com.clinica.sonrisafeliz.modelo;
 
-import com.clinica.sonrisafeliz.enums.EstadoTurno;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import com.clinica.sonrisafeliz.enums.EstadoTurno;
 
 public class Turno {
     private Long id;
@@ -14,7 +14,6 @@ public class Turno {
     private LocalTime hora;
     private EstadoTurno estado;
 
-    public Turno() {}
     public Turno(Paciente paciente, Odontologo odontologo, LocalDate fecha, LocalTime hora) {
         this.paciente = paciente;
         this.odontologo = odontologo;
