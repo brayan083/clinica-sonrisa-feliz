@@ -65,6 +65,9 @@ public class Main {
             }
         }
 
+        System.out.println("\n--- HISTORIAL DE TURNOS ---");
+        historialGeneralTurnos.forEach(t -> System.out.println(t));
+
         System.out.println("\n=== FIN DE LA DEMO ===");
     }
 }
