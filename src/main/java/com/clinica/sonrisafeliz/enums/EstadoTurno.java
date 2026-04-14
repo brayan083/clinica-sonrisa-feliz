@@ -1,4 +1,4 @@
-package com.clinica.sonrisafeliz.modelo.Enums;
+package com.clinica.sonrisafeliz.enums;
 
 /**
  * Modela el ciclo de vida de un turno en la clínica.

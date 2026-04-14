@@ -1,117 +1,73 @@
 package com.clinica.sonrisafeliz;
 
+import com.clinica.sonrisafeliz.modelo.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import com.clinica.sonrisafeliz.modelo.Domicilio;
-import com.clinica.sonrisafeliz.modelo.Enums.EstadoTurno;
-import com.clinica.sonrisafeliz.modelo.Odontologo;
-import com.clinica.sonrisafeliz.modelo.Paciente;
-import com.clinica.sonrisafeliz.modelo.Recepcionista;
-import com.clinica.sonrisafeliz.modelo.Turno;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Clase de arranque y prueba para la Entrega 1.
- * Demuestra la creación de objetos del modelo de dominio y sus relaciones.
+ * Clase principal para probar el Modelo de Dominio en la Entrega 1.
  */
 public class Main {
-
     public static void main(String[] args) {
+        System.out.println("=== INICIANDO SISTEMA SONRISA FELIZ ===\n");
 
-        System.out.println("=======================================================");
-        System.out.println("  Clínica Odontológica 'Sonrisa Feliz' - Entrega 1    ");
-        System.out.println("=======================================================\n");
+        // 1. Creamos el "Repositorio" simulado (Lista general de turnos de la clínica)
+        List<Turno> historialGeneralTurnos = new ArrayList<>();
 
-        // ── 1. Crear domicilios ────────────────────────────────
-        Domicilio domAna    = new Domicilio("Av. Corrientes", "1234", "Buenos Aires", "Buenos Aires");
-        Domicilio domCarlos = new Domicilio("San Martín",     "567",  "Córdoba",      "Córdoba");
-        Domicilio domLucia  = new Domicilio("Belgrano",       "890",  "Rosario",      "Santa Fe");
+        // 2. Creamos a nuestra Recepcionista
+        Recepcionista marta = new Recepcionista("Marta", "Gómez", "marta@clinica.com", "REC-001");
 
-        // ── 2. Crear pacientes (composición con Domicilio) ─────
-        Paciente ana    = new Paciente("Ana",    "García",    "30111222", "ana@mail.com",    domAna);
-        Paciente carlos = new Paciente("Carlos", "Martínez",  "28333444", "carlos@mail.com", domCarlos);
-        Paciente lucia  = new Paciente("Lucía",  "Fernández", "35555666", "lucia@mail.com",  domLucia);
-        Paciente lucia2 = new Paciente("Lucía",  "Fernández", "35555666", "lucia@mail.com", LocalDate.of(2024, 1, 15), domLucia);
+        // 3. Creamos a nuestro Odontólogo
+        Odontologo drPerez = new Odontologo("Carlos", "Pérez", "cperez@clinica.com", "MAT-9988");
 
-        // ── 3. Crear odontólogos ───────────────────────────────
-        Odontologo drLopez    = new Odontologo("Diego",   "López",   "diego@clinica.com",   "MAT-001");
-        Odontologo draSanchez = new Odontologo("Valeria", "Sánchez", "valeria@clinica.com", "MAT-002");
+        System.out.println("--- REGISTRO DE PACIENTE ---");
+        // 4. Marta registra un domicilio y un paciente
+        Domicilio domJuan = new Domicilio("Av. Siempreviva", "742", "Springfield", "Buenos Aires");
+        Paciente pacienteJuan = marta.registrarPaciente("Juan", "Topo", "juan@mail.com", "12345678", domJuan);
+        System.out.println(pacienteJuan.toString() + "\n");
 
-        // ── 4. Crear recepcionista ─────────────────────────────
-        Recepcionista recepcionista = new Recepcionista("María", "Gómez", "maria@clinica.com", "LEG-01");
+        System.out.println("--- ASIGNACIÓN DE TURNO ---");
+        // 5. Marta intenta asignar un turno para Juan con el Dr. Pérez
+        LocalDate fechaTurno = LocalDate.of(2026, 4, 20);
+        LocalTime horaTurno = LocalTime.of(10, 30);
 
-        // ── 5. Crear turnos vía recepcionista ──────────────────
-        Turno turno1 = recepcionista.asignarTurno(ana,    drLopez,    LocalDate.of(2026, 4, 15), LocalTime.of(9,  0));
-        Turno turno2 = recepcionista.asignarTurno(carlos, draSanchez, LocalDate.of(2026, 4, 15), LocalTime.of(10, 30));
-        Turno turno3 = recepcionista.asignarTurno(lucia,  drLopez,    LocalDate.of(2026, 4, 16), LocalTime.of(14, 0));
-        Turno turnoPasado = recepcionista.asignarTurno(ana, draSanchez, LocalDate.of(2026, 3, 1), LocalTime.of(11, 0));
+        Turno turnoJuan = marta.asignarTurno(pacienteJuan, drPerez, fechaTurno, horaTurno);
 
-        // Ajustamos estados que difieren del PENDIENTE inicial.
-        turno2.setEstado(EstadoTurno.CONFIRMADO);
-        turnoPasado.setEstado(EstadoTurno.COMPLETADO);
+        // Si se creó con éxito, lo guardamos en la lista general del sistema
+        if(turnoJuan != null) {
+            historialGeneralTurnos.add(turnoJuan);
+            System.out.println(turnoJuan.toString() + "\n");
+        }
 
-        // ── 6. Imprimir pacientes ──────────────────────────────
-        System.out.println("── PACIENTES ─────────────────────────────────────────");
-        imprimirPaciente(ana);
-        imprimirPaciente(carlos);
-        imprimirPaciente(lucia);
-        imprimirPaciente(lucia2);
+        System.out.println("--- PRUEBA DE RESTRICCIÓN DE AGENDA ---");
+        // 6. Probamos qué pasa si creamos otro paciente e intentamos meterlo a la misma hora
+        Paciente pacienteMaria = marta.registrarPaciente("María", "López", "maria@mail.com", "87654321", domJuan);
+        Turno turnoFallido = marta.asignarTurno(pacienteMaria, drPerez, fechaTurno, horaTurno);
+        if (turnoFallido != null) {
+            historialGeneralTurnos.add(turnoFallido);
+        }
+        System.out.println();
 
-        // ── 7. Imprimir odontólogos ────────────────────────────
-        System.out.println("\n── ODONTÓLOGOS ───────────────────────────────────────");
-        System.out.println(drLopez);
-        System.out.println(draSanchez);
+        System.out.println("--- MODIFICACIÓN Y CANCELACIÓN ---");
+        // 7. Marta cancela el turno de Juan porque se enfermó
+        // 8. Como el turno de Juan se canceló, ahora ese horario DEBERÍA estar libre para María
+        if (turnoJuan != null) {
+            marta.cancelarTurno(turnoJuan);
+            System.out.println("Estado actual del turno de Juan: " + turnoJuan.getEstado());
 
-        // ── 8. Imprimir recepcionista ──────────────────────────
-        System.out.println("\n── RECEPCIONISTA ─────────────────────────────────────");
-        System.out.println(recepcionista);
+            System.out.println("\nReintentando turno para María en el mismo horario...");
+            Turno turnoMaria = marta.asignarTurno(pacienteMaria, drPerez, fechaTurno, horaTurno);
+            if (turnoMaria != null) {
+                historialGeneralTurnos.add(turnoMaria);
+            }
+        }
 
-        // ── 9. Imprimir turnos ─────────────────────────────────
-        System.out.println("\n── TURNOS ────────────────────────────────────────────");
-        imprimirTurno(turno1);
-        imprimirTurno(turno2);
-        imprimirTurno(turno3);
+        System.out.println("\n--- HISTORIAL DE TURNOS ---");
+        historialGeneralTurnos.forEach(t -> System.out.println(t));
 
-        // ── 10. Verificar métodos de negocio ───────────────────
-        System.out.println("\n── VERIFICACIÓN DE MÉTODOS DE NEGOCIO ────────────────");
-        System.out.println("Nombre completo Ana:      " + ana.getNombreCompleto());
-        System.out.println("Nombre completo Dr López: " + drLopez.getNombreCompleto());
-        System.out.println("turno1 es futuro:         " + turno1.esFuturo());
-        System.out.println("turno1 está disponible:   " + turno1.estaDisponible());
-        System.out.println("turnoPasado es futuro:    " + turnoPasado.esFuturo());
-        System.out.println("turnoPasado disponible:   " + turnoPasado.estaDisponible());
-
-        // ── 11. Verificar equals/hashCode por DNI ──────────────
-        System.out.println("\n── VERIFICACIÓN DE EQUALS (identidad de negocio) ─────");
-        Paciente anaDuplicada = new Paciente("Ana", "García", "30111222", "otro@mail.com", domAna);
-        System.out.println("ana.equals(anaDuplicada) [mismo DNI]: " + ana.equals(anaDuplicada));
-        System.out.println("ana.equals(carlos)       [DNI dif.]: " + ana.equals(carlos));
-
-        // ── 12. Estados del ciclo de vida ──────────────────────
-        System.out.println("\n── CICLO DE VIDA DEL TURNO ───────────────────────────");
-        System.out.println("Estado inicial turno3: " + turno3.getEstado());
-        turno3.setEstado(EstadoTurno.CONFIRMADO);
-        System.out.println("Después de confirmar:  " + turno3.getEstado());
-        turno3.setEstado(EstadoTurno.COMPLETADO);
-        System.out.println("Después de completar:  " + turno3.getEstado());
-
-    }
-
-    // ── Helpers de impresión ───────────────────────────────────
-
-    private static void imprimirPaciente(Paciente p) {
-        System.out.println("  → " + p.getNombreCompleto()
-                + " | DNI: " + p.getDni()
-                + " | Ingreso: " + p.getFechaIngreso()
-                + " | Dom.: " + p.getDomicilio());
-    }
-
-    private static void imprimirTurno(Turno t) {
-        System.out.println("  → Turno #" + t.getId()
-                + " | " + t.getPaciente().getNombreCompleto()
-                + " con Dr/a. " + t.getOdontologo().getNombreCompleto()
-                + " | " + t.getFecha() + " " + t.getHora()
-                + " | Estado: " + t.getEstado()
-                + " | Futuro: " + t.esFuturo());
+        System.out.println("\n=== FIN DE LA DEMO ===");
     }
 }
