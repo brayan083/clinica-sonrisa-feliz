@@ -39,7 +39,8 @@ public class Main {
         // Si se creó con éxito, lo guardamos en la lista general del sistema
         if(turnoJuan != null) {
             historialGeneralTurnos.add(turnoJuan);
-            System.out.println(turnoJuan.toString() + "\n");
+            System.out.println(turnoJuan.toString());
+            System.out.println("Turnos del paciente Juan: " + pacienteJuan.getTurnos().size() + " turno(s)" + "\n");
         }
 
         System.out.println("--- PRUEBA DE RESTRICCIÓN DE AGENDA ---");
@@ -62,6 +63,7 @@ public class Main {
             Turno turnoMaria = marta.asignarTurno(pacienteMaria, drPerez, fechaTurno, horaTurno);
             if (turnoMaria != null) {
                 historialGeneralTurnos.add(turnoMaria);
+                System.out.println("Turnos del paciente María: " + pacienteMaria.getTurnos().size() + " turno(s)");
             }
         }
 
