@@ -1,12 +1,15 @@
 package com.clinica.sonrisafeliz.modelo;
 
 public abstract class Persona {
-    private Long id;
+    private static long contadorId = 1;
+
+    private final Long id;
     private String nombre;
     private String apellido;
     private String email;
 
     public Persona(String nombre, String apellido, String email) {
+        this.id = contadorId++;
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
@@ -17,7 +20,6 @@ public abstract class Persona {
     }
 
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

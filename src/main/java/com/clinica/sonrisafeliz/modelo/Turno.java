@@ -7,7 +7,9 @@ import java.time.LocalTime;
 import com.clinica.sonrisafeliz.enums.EstadoTurno;
 
 public class Turno {
-    private Long id;
+    private static long contadorId = 1;
+
+    private final Long id;
     private Paciente paciente;
     private Odontologo odontologo;
     private LocalDate fecha;
@@ -15,6 +17,7 @@ public class Turno {
     private EstadoTurno estado;
 
     public Turno(Paciente paciente, Odontologo odontologo, LocalDate fecha, LocalTime hora) {
+        this.id = contadorId++;
         this.paciente = paciente;
         this.odontologo = odontologo;
         this.fecha = fecha;
@@ -28,7 +31,6 @@ public class Turno {
     }
 
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
     public Paciente getPaciente() { return paciente; }
     public void setPaciente(Paciente paciente) { this.paciente = paciente; }
     public Odontologo getOdontologo() { return odontologo; }

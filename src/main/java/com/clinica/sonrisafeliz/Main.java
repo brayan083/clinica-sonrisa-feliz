@@ -1,11 +1,15 @@
 package com.clinica.sonrisafeliz;
 
-import com.clinica.sonrisafeliz.modelo.*;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.clinica.sonrisafeliz.modelo.Domicilio;
+import com.clinica.sonrisafeliz.modelo.Odontologo;
+import com.clinica.sonrisafeliz.modelo.Paciente;
+import com.clinica.sonrisafeliz.modelo.Recepcionista;
+import com.clinica.sonrisafeliz.modelo.Turno;
 
 /**
  * Clase principal para probar el Modelo de Dominio en la Entrega 1.
@@ -31,7 +35,7 @@ public class Main {
 
         System.out.println("--- ASIGNACIÓN DE TURNO ---");
         // 5. Marta intenta asignar un turno para Juan con el Dr. Pérez
-        LocalDate fechaTurno = LocalDate.of(2026, 4, 20);
+        LocalDate fechaTurno = LocalDate.of(2026, 6, 15);
         LocalTime horaTurno = LocalTime.of(10, 30);
 
         Turno turnoJuan = marta.asignarTurno(pacienteJuan, drPerez, fechaTurno, horaTurno);
