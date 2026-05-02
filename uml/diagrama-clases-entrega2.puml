@@ -1,0 +1,378 @@
+@startuml Clinica Sonrisa Feliz - Entrega 2
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle Bold
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+' ══════════════════════════════════════════
+' PAQUETE: modelo
+' ══════════════════════════════════════════
+package modelo {
+
+    abstract class Persona {
+        - {static} contadorId : long
+        - id : Long
+        - nombre : String
+        - apellido : String
+        - email : String
+        + Persona(nombre, apellido, email)
+        + getNombreCompleto() : String
+        + getId() : Long
+        + getNombre() : String
+        + getApellido() : String
+        + getEmail() : String
+        + setNombre(String)
+        + setApellido(String)
+        + setEmail(String)
+        + toString() : String
+    }
+
+    class Paciente {
+        - dni : String
+        - fechaIngreso : LocalDate
+        - domicilio : Domicilio
+        - turnos : List<Turno>
+        + Paciente(nombre, apellido, email, dni, domicilio)
+        + agregarTurno(Turno)
+        + getDni() : String
+        + getFechaIngreso() : LocalDate
+        + getDomicilio() : Domicilio
+        + getTurnos() : List<Turno>
+        + equals(Object) : boolean
+        + hashCode() : int
+        + toString() : String
+    }
+
+    class Odontologo {
+        - matricula : String
+        - agenda : Agenda
+        + Odontologo(nombre, apellido, email, matricula)
+        + getMatricula() : String
+        + getAgenda() : Agenda
+        + equals(Object) : boolean
+        + hashCode() : int
+        + toString() : String
+    }
+
+    class Recepcionista {
+        - legajo : String
+        + Recepcionista(nombre, apellido, email, legajo)
+        + getLegajo() : String
+        + equals(Object) : boolean
+        + hashCode() : int
+        + toString() : String
+    }
+
+    class Domicilio {
+        - {static} contadorId : long
+        - id : Long
+        - calle : String
+        - numero : String
+        - localidad : String
+        - provincia : String
+        + Domicilio(calle, numero, localidad, provincia)
+        + getId() : Long
+        + getCalle() : String
+        + getNumero() : String
+        + getLocalidad() : String
+        + getProvincia() : String
+        + toString() : String
+    }
+
+    class Turno {
+        - {static} contadorId : long
+        - id : Long
+        - fecha : LocalDate
+        - hora : LocalTime
+        - estado : EstadoTurno
+        + Turno(paciente, odontologo, fecha, hora)
+        + esFuturo() : boolean
+        + getId() : Long
+        + getFecha() : LocalDate
+        + getHora() : LocalTime
+        + getEstado() : EstadoTurno
+        + getPaciente() : Paciente
+        + getOdontologo() : Odontologo
+        + setFecha(LocalDate)
+        + setHora(LocalTime)
+        + setEstado(EstadoTurno)
+        + toString() : String
+    }
+
+    class Agenda {
+        - turnos : List<Turno>
+        + Agenda()
+        + agregarTurno(Turno)
+        + estaDisponible(LocalDate, LocalTime) : boolean
+        + getTurnos() : List<Turno>
+    }
+
+    enum EstadoTurno {
+        PENDIENTE
+        CONFIRMADO
+        CANCELADO
+        COMPLETADO
+    }
+
+    Persona <|-- Paciente
+    Persona <|-- Odontologo
+    Persona <|-- Recepcionista
+
+    Paciente *-- Domicilio
+    Paciente "1" o-- "0..*" Turno
+
+    Odontologo *-- Agenda
+    Agenda "1" o-- "0..*" Turno
+
+    Turno --> Paciente
+    Turno --> Odontologo
+    Turno --> EstadoTurno
+}
+
+' ══════════════════════════════════════════
+' PAQUETE: repositorio
+' ══════════════════════════════════════════
+package repositorio {
+
+    interface IRepositorio<T> {
+        + guardar(T)
+        + buscarPorId(Long) : Optional<T>
+        + buscarTodos() : List<T>
+        + actualizar(T)
+        + eliminar(Long)
+    }
+
+    class RepositorioPaciente {
+        - almacenamiento : Map<Long, Paciente>
+        + guardar(Paciente)
+        + buscarPorId(Long) : Optional<Paciente>
+        + buscarTodos() : List<Paciente>
+        + actualizar(Paciente)
+        + eliminar(Long)
+        + buscarPorDni(String) : Optional<Paciente>
+        + existeDni(String) : boolean
+    }
+
+    class RepositorioOdontologo {
+        - almacenamiento : Map<Long, Odontologo>
+        + guardar(Odontologo)
+        + buscarPorId(Long) : Optional<Odontologo>
+        + buscarTodos() : List<Odontologo>
+        + actualizar(Odontologo)
+        + eliminar(Long)
+        + buscarPorMatricula(String) : Optional<Odontologo>
+        + existeMatricula(String) : boolean
+    }
+
+    class RepositorioTurno {
+        - almacenamiento : List<Turno>
+        + guardar(Turno)
+        + buscarPorId(Long) : Optional<Turno>
+        + buscarTodos() : List<Turno>
+        + actualizar(Turno)
+        + eliminar(Long)
+        + buscarPorPacienteId(Long) : List<Turno>
+        + buscarPorOdontologoId(Long) : List<Turno>
+        + buscarPorFecha(LocalDate) : List<Turno>
+        + buscarPorEstado(EstadoTurno) : List<Turno>
+    }
+
+    IRepositorio <|.. RepositorioPaciente
+    IRepositorio <|.. RepositorioOdontologo
+    IRepositorio <|.. RepositorioTurno
+
+    RepositorioPaciente ..> modelo.Paciente
+    RepositorioOdontologo ..> modelo.Odontologo
+    RepositorioTurno ..> modelo.Turno
+}
+
+' ══════════════════════════════════════════
+' PAQUETE: servicio
+' ══════════════════════════════════════════
+package servicio {
+
+    class ServicioPaciente {
+        - repositorioPaciente : RepositorioPaciente
+        - repositorioTurno : RepositorioTurno
+        + ServicioPaciente(RepositorioPaciente, RepositorioTurno)
+        + registrar(nombre, apellido, email, dni, domicilio) : Paciente
+        + buscarPorId(Long) : Paciente
+        + buscarPorDni(String) : Paciente
+        + listarTodos() : List<Paciente>
+        + actualizar(Paciente)
+        + eliminar(Long)
+    }
+
+    class ServicioOdontologo {
+        - repositorioOdontologo : RepositorioOdontologo
+        - repositorioTurno : RepositorioTurno
+        + ServicioOdontologo(RepositorioOdontologo, RepositorioTurno)
+        + registrar(nombre, apellido, email, matricula) : Odontologo
+        + buscarPorId(Long) : Odontologo
+        + buscarPorMatricula(String) : Odontologo
+        + listarTodos() : List<Odontologo>
+        + actualizar(Odontologo)
+        + eliminar(Long)
+    }
+
+    class ServicioTurno {
+        - repositorioTurno : RepositorioTurno
+        - servicioPaciente : ServicioPaciente
+        - servicioOdontologo : ServicioOdontologo
+        + ServicioTurno(RepositorioTurno, ServicioPaciente, ServicioOdontologo)
+        + reservar(pacienteId, odontologoId, fecha, hora) : Turno
+        + buscarPorId(Long) : Turno
+        + confirmar(Long)
+        + cancelar(Long)
+        + completar(Long)
+        + modificar(Long, LocalDate, LocalTime)
+        + listarTodos() : List<Turno>
+        + listarPorPaciente(Long) : List<Turno>
+        + listarPorOdontologo(Long) : List<Turno>
+        + listarPorFecha(LocalDate) : List<Turno>
+        + listarPorEstado(EstadoTurno) : List<Turno>
+    }
+
+    ServicioPaciente --> repositorio.RepositorioPaciente
+    ServicioPaciente --> repositorio.RepositorioTurno
+    ServicioOdontologo --> repositorio.RepositorioOdontologo
+    ServicioOdontologo --> repositorio.RepositorioTurno
+    ServicioTurno --> repositorio.RepositorioTurno
+    ServicioTurno --> ServicioPaciente
+    ServicioTurno --> ServicioOdontologo
+}
+
+' ══════════════════════════════════════════
+' PAQUETE: controlador
+' ══════════════════════════════════════════
+package controlador {
+
+    class ControladorPaciente {
+        - servicioPaciente : ServicioPaciente
+        + ControladorPaciente(ServicioPaciente)
+        + registrar(nombre, apellido, email, dni, domicilio) : Paciente
+        + buscarPorId(Long) : Paciente
+        + buscarPorDni(String) : Paciente
+        + listarTodos() : List<Paciente>
+        + actualizar(Paciente)
+        + eliminar(Long)
+    }
+
+    class ControladorOdontologo {
+        - servicioOdontologo : ServicioOdontologo
+        + ControladorOdontologo(ServicioOdontologo)
+        + registrar(nombre, apellido, email, matricula) : Odontologo
+        + buscarPorId(Long) : Odontologo
+        + buscarPorMatricula(String) : Odontologo
+        + listarTodos() : List<Odontologo>
+        + actualizar(Odontologo)
+        + eliminar(Long)
+    }
+
+    class ControladorTurno {
+        - servicioTurno : ServicioTurno
+        + ControladorTurno(ServicioTurno)
+        + reservar(pacienteId, odontologoId, fecha, hora) : Turno
+        + buscarPorId(Long) : Turno
+        + confirmar(Long)
+        + cancelar(Long)
+        + completar(Long)
+        + modificar(Long, LocalDate, LocalTime)
+        + listarTodos() : List<Turno>
+        + listarPorPaciente(Long) : List<Turno>
+        + listarPorOdontologo(Long) : List<Turno>
+        + listarPorFecha(LocalDate) : List<Turno>
+        + listarPorEstado(EstadoTurno) : List<Turno>
+    }
+
+    ControladorPaciente --> servicio.ServicioPaciente
+    ControladorOdontologo --> servicio.ServicioOdontologo
+    ControladorTurno --> servicio.ServicioTurno
+}
+
+' ══════════════════════════════════════════
+' PAQUETE: excepcion
+' ══════════════════════════════════════════
+package excepcion {
+
+    class PacienteNoEncontradoException
+    class OdontologoNoEncontradoException
+    class TurnoYaReservadoException
+    class DniDuplicadoException
+    class MatriculaDuplicadaException
+    class TurnoNoEncontradoException
+
+    PacienteNoEncontradoException --|> RuntimeException
+    OdontologoNoEncontradoException --|> RuntimeException
+    TurnoYaReservadoException --|> RuntimeException
+    DniDuplicadoException --|> RuntimeException
+    MatriculaDuplicadaException --|> RuntimeException
+    TurnoNoEncontradoException --|> RuntimeException
+}
+
+' ══════════════════════════════════════════
+' PAQUETE: presentacion
+' ══════════════════════════════════════════
+package presentacion {
+
+    class ConsolaUtils {
+        - scanner : Scanner
+        + ConsolaUtils(Scanner)
+        + leerTexto(String) : String
+        + leerTextoOpcional(String, String) : String
+        + leerEntero(String) : int
+        + leerLong(String) : Long
+        + leerFecha(String) : LocalDate
+        + leerHora(String) : LocalTime
+    }
+
+    class MenuPrincipal {
+        - menuPacientes : MenuPacientes
+        - menuOdontologos : MenuOdontologos
+        - menuTurnos : MenuTurnos
+        - utils : ConsolaUtils
+        + MenuPrincipal(MenuPacientes, MenuOdontologos, MenuTurnos)
+        + iniciar()
+    }
+
+    class MenuPacientes {
+        - controladorPaciente : ControladorPaciente
+        - utils : ConsolaUtils
+        + MenuPacientes(ControladorPaciente, ConsolaUtils)
+        + mostrar()
+        + listarTodos()
+    }
+
+    class MenuOdontologos {
+        - controladorOdontologo : ControladorOdontologo
+        - utils : ConsolaUtils
+        + MenuOdontologos(ControladorOdontologo, ConsolaUtils)
+        + mostrar()
+        + listarTodos()
+    }
+
+    class MenuTurnos {
+        - controladorTurno : ControladorTurno
+        - menuPacientes : MenuPacientes
+        - menuOdontologos : MenuOdontologos
+        - utils : ConsolaUtils
+        + MenuTurnos(ControladorTurno, MenuPacientes, MenuOdontologos, ConsolaUtils)
+        + mostrar()
+    }
+
+    MenuPrincipal --> MenuPacientes
+    MenuPrincipal --> MenuOdontologos
+    MenuPrincipal --> MenuTurnos
+    MenuPrincipal --> ConsolaUtils
+    MenuPacientes --> ConsolaUtils
+    MenuPacientes --> controlador.ControladorPaciente
+    MenuOdontologos --> ConsolaUtils
+    MenuOdontologos --> controlador.ControladorOdontologo
+    MenuTurnos --> ConsolaUtils
+    MenuTurnos --> controlador.ControladorTurno
+    MenuTurnos --> MenuPacientes
+    MenuTurnos --> MenuOdontologos
+}
+
+@enduml
