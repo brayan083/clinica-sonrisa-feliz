@@ -61,6 +61,14 @@ public class MenuTurnos {
     private void reservar() {
         System.out.println("\n--- Reservar Turno ---");
         try {
+            if (!menuPacientes.hayPacientes()) {
+                System.out.println("✗ No hay pacientes registrados. Registre un paciente antes de reservar un turno.");
+                return;
+            }
+            if (!menuOdontologos.hayOdontologos()) {
+                System.out.println("✗ No hay odontólogos registrados. Registre un odontólogo antes de reservar un turno.");
+                return;
+            }
             menuPacientes.listarTodos();
             Long pacienteId = utils.leerLong("ID del paciente: ");
             menuOdontologos.listarTodos();

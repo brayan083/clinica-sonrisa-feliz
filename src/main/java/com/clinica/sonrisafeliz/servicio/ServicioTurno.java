@@ -1,6 +1,7 @@
 package com.clinica.sonrisafeliz.servicio;
 
 import com.clinica.sonrisafeliz.enums.EstadoTurno;
+import com.clinica.sonrisafeliz.excepcion.FechaInvalidaException;
 import com.clinica.sonrisafeliz.excepcion.TurnoNoEncontradoException;
 import com.clinica.sonrisafeliz.excepcion.TurnoYaReservadoException;
 import com.clinica.sonrisafeliz.modelo.Odontologo;
@@ -29,6 +30,10 @@ public class ServicioTurno {
     }
 
     public Turno reservar(Long pacienteId, Long odontologoId, LocalDate fecha, LocalTime hora) {
+        if (fecha.isBefore(LocalDate.now())) {
+            throw new FechaInvalidaException("No se puede reservar un turno en una fecha pasada: " + fecha);
+        }
+
         Paciente paciente = servicioPaciente.buscarPorId(pacienteId);
         Odontologo odontologo = servicioOdontologo.buscarPorId(odontologoId);
 
@@ -65,6 +70,10 @@ public class ServicioTurno {
     }
 
     public void modificar(Long turnoId, LocalDate nuevaFecha, LocalTime nuevaHora) {
+        if (nuevaFecha.isBefore(LocalDate.now())) {
+            throw new FechaInvalidaException("No se puede modificar un turno a una fecha pasada: " + nuevaFecha);
+        }
+
         Turno turno = buscarPorId(turnoId);
         Odontologo odontologo = turno.getOdontologo();
 

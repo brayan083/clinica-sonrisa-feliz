@@ -41,6 +41,10 @@ public class MenuPacientes {
         }
     }
 
+    public boolean hayPacientes() {
+        return !controladorPaciente.listarTodos().isEmpty();
+    }
+
     public void listarTodos() {
         List<Paciente> lista = controladorPaciente.listarTodos();
         if (lista.isEmpty()) {

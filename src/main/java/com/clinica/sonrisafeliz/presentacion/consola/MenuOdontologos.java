@@ -40,6 +40,10 @@ public class MenuOdontologos {
         }
     }
 
+    public boolean hayOdontologos() {
+        return !controladorOdontologo.listarTodos().isEmpty();
+    }
+
     public void listarTodos() {
         List<Odontologo> lista = controladorOdontologo.listarTodos();
         if (lista.isEmpty()) {
