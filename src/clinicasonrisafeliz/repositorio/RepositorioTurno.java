@@ -6,8 +6,6 @@ import clinicasonrisafeliz.modelo.Turno;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class RepositorioTurno implements IRepositorio<Turno> {
 
@@ -19,10 +17,13 @@ public class RepositorioTurno implements IRepositorio<Turno> {
     }
 
     @Override
-    public Optional<Turno> buscarPorId(Long id) {
-        return almacenamiento.stream()
-                .filter(t -> t.getId().equals(id))
-                .findFirst();
+    public Turno buscarPorId(Long id) {
+        for (Turno t : almacenamiento) {
+            if (t.getId().equals(id)) {
+                return t;
+            }
+        }
+        return null; // devuelve null si no existe
     }
 
     @Override
@@ -37,36 +38,65 @@ public class RepositorioTurno implements IRepositorio<Turno> {
 
     @Override
     public void eliminar(Long id) {
-        almacenamiento.removeIf(t -> t.getId().equals(id));
+        Turno aEliminar = null;
+        for (Turno t : almacenamiento) {
+            if (t.getId().equals(id)) {
+                aEliminar = t;
+                break;
+            }
+        }
+        if (aEliminar != null) {
+            almacenamiento.remove(aEliminar);
+        }
     }
 
     public List<Turno> buscarPorPacienteId(Long pacienteId) {
-        return almacenamiento.stream()
-                .filter(t -> t.getPaciente().getId().equals(pacienteId))
-                .collect(Collectors.toList());
+        List<Turno> resultado = new ArrayList<>();
+        for (Turno t : almacenamiento) {
+            if (t.getPaciente().getId().equals(pacienteId)) {
+                resultado.add(t);
+            }
+        }
+        return resultado;
     }
 
     public List<Turno> buscarPorOdontologoId(Long odontologoId) {
-        return almacenamiento.stream()
-                .filter(t -> t.getOdontologo().getId().equals(odontologoId))
-                .collect(Collectors.toList());
+        List<Turno> resultado = new ArrayList<>();
+        for (Turno t : almacenamiento) {
+            if (t.getOdontologo().getId().equals(odontologoId)) {
+                resultado.add(t);
+            }
+        }
+        return resultado;
     }
 
     public List<Turno> buscarPorFecha(LocalDate fecha) {
-        return almacenamiento.stream()
-                .filter(t -> t.getFecha().equals(fecha))
-                .collect(Collectors.toList());
+        List<Turno> resultado = new ArrayList<>();
+        for (Turno t : almacenamiento) {
+            if (t.getFecha().equals(fecha)) {
+                resultado.add(t);
+            }
+        }
+        return resultado;
     }
 
     public List<Turno> buscarPorEstado(EstadoTurno estado) {
-        return almacenamiento.stream()
-                .filter(t -> t.getEstado() == estado)
-                .collect(Collectors.toList());
+        List<Turno> resultado = new ArrayList<>();
+        for (Turno t : almacenamiento) {
+            if (t.getEstado() == estado) {
+                resultado.add(t);
+            }
+        }
+        return resultado;
     }
 
     public List<Turno> buscarPorRangoDeFechas(LocalDate desde, LocalDate hasta) {
-        return almacenamiento.stream()
-                .filter(t -> !t.getFecha().isBefore(desde) && !t.getFecha().isAfter(hasta))
-                .collect(Collectors.toList());
+        List<Turno> resultado = new ArrayList<>();
+        for (Turno t : almacenamiento) {
+            if (!t.getFecha().isBefore(desde) && !t.getFecha().isAfter(hasta)) {
+                resultado.add(t);
+            }
+        }
+        return resultado;
     }
 }

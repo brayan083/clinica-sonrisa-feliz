@@ -1,6 +1,7 @@
 package clinicasonrisafeliz.servicio;
 
 import clinicasonrisafeliz.enums.EstadoTurno;
+import clinicasonrisafeliz.excepcion.DatoInvalidoException;
 import clinicasonrisafeliz.excepcion.FechaInvalidaException;
 import clinicasonrisafeliz.excepcion.TurnoNoEncontradoException;
 import clinicasonrisafeliz.excepcion.TurnoYaReservadoException;
@@ -25,8 +26,8 @@ public class ServicioTurno {
     public ServicioTurno(RepositorioTurno repositorioTurno,
                          ServicioPaciente servicioPaciente,
                          ServicioOdontologo servicioOdontologo) {
-        this.repositorioTurno = repositorioTurno;
-        this.servicioPaciente = servicioPaciente;
+        this.repositorioTurno   = repositorioTurno;
+        this.servicioPaciente   = servicioPaciente;
         this.servicioOdontologo = servicioOdontologo;
     }
 
@@ -35,7 +36,7 @@ public class ServicioTurno {
             throw new FechaInvalidaException("No se puede reservar un turno en una fecha pasada: " + fecha);
         }
 
-        Paciente paciente = servicioPaciente.buscarPorId(pacienteId);
+        Paciente   paciente   = servicioPaciente.buscarPorId(pacienteId);
         Odontologo odontologo = servicioOdontologo.buscarPorId(odontologoId);
 
         if (!odontologo.getAgenda().estaDisponible(fecha, hora)) {
@@ -51,8 +52,11 @@ public class ServicioTurno {
     }
 
     public Turno buscarPorId(Long id) {
-        return repositorioTurno.buscarPorId(id)
-                .orElseThrow(() -> new TurnoNoEncontradoException("No se encontró turno con ID: " + id));
+        Turno turno = repositorioTurno.buscarPorId(id);
+        if (turno == null) {
+            throw new TurnoNoEncontradoException("No se encontró turno con ID: " + id);
+        }
+        return turno;
     }
 
     public void confirmar(Long turnoId) {
@@ -75,7 +79,7 @@ public class ServicioTurno {
             throw new FechaInvalidaException("No se puede modificar un turno a una fecha pasada: " + nuevaFecha);
         }
 
-        Turno turno = buscarPorId(turnoId);
+        Turno      turno      = buscarPorId(turnoId);
         Odontologo odontologo = turno.getOdontologo();
 
         if (!odontologo.getAgenda().estaDisponible(nuevaFecha, nuevaHora)) {
@@ -89,49 +93,72 @@ public class ServicioTurno {
         repositorioTurno.actualizar(turno);
     }
 
+    /**
+     * Lista todos los turnos por orden natural (fecha y hora).
+     * Usa Collections.sort() con Comparable<Turno>.
+     */
     public List<Turno> listarTodos() {
         List<Turno> lista = repositorioTurno.buscarTodos();
-        Collections.sort(lista); // orden natural definido en Turno.compareTo
+        Collections.sort(lista);
         return lista;
     }
 
+    /**
+     * Filtra los turnos de un paciente y los ordena con Stream API + sorted() (Comparable).
+     */
     public List<Turno> listarPorPaciente(Long pacienteId) {
         servicioPaciente.buscarPorId(pacienteId);
-        return repositorioTurno.buscarPorPacienteId(pacienteId).stream()
-                .sorted(Comparator.comparing(Turno::getFecha).thenComparing(Turno::getHora))
-                .collect(Collectors.toList());
-    }
-
-    public List<Turno> listarPorOdontologo(Long odontologoId) {
-        servicioOdontologo.buscarPorId(odontologoId);
-        return repositorioTurno.buscarPorOdontologoId(odontologoId).stream()
-                .sorted(Comparator.comparing(Turno::getFecha).thenComparing(Turno::getHora))
-                .collect(Collectors.toList());
-    }
-
-    public List<Turno> listarPorFecha(LocalDate fecha) {
-        return repositorioTurno.buscarPorFecha(fecha).stream()
-                .sorted(Comparator.comparing(Turno::getHora))
-                .collect(Collectors.toList());
-    }
-
-    public List<Turno> listarPorEstado(EstadoTurno estado) {
-        return repositorioTurno.buscarPorEstado(estado).stream()
-                .sorted(Comparator.comparing(Turno::getFecha).thenComparing(Turno::getHora))
+        return repositorioTurno.buscarPorPacienteId(pacienteId)
+                .stream()
+                .sorted()
                 .collect(Collectors.toList());
     }
 
     /**
-     * Busca todos los turnos cuya fecha esté dentro del rango [desde, hasta] inclusive.
-     * Demuestra uso de Stream API con filter y sorted (Comparable).
+     * Filtra los turnos de un odontólogo y los ordena con Stream API + sorted() (Comparable).
+     */
+    public List<Turno> listarPorOdontologo(Long odontologoId) {
+        servicioOdontologo.buscarPorId(odontologoId);
+        return repositorioTurno.buscarPorOdontologoId(odontologoId)
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Lista turnos de una fecha específica ordenados por hora.
+     * Usa Stream API + sorted(Comparator) para orden personalizado.
+     */
+    public List<Turno> listarPorFecha(LocalDate fecha) {
+        return repositorioTurno.buscarPorFecha(fecha)
+                .stream()
+                .sorted(Comparator.comparing(Turno::getHora))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Filtra turnos por estado y ordena con Stream API + sorted() (Comparable).
+     */
+    public List<Turno> listarPorEstado(EstadoTurno estado) {
+        return repositorioTurno.buscarPorEstado(estado)
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Busca turnos en el rango [desde, hasta] inclusive.
+     * Usa Stream API: filter (predicado de fechas) + sorted (Comparable) + collect.
      */
     public List<Turno> listarPorRangoDeFechas(LocalDate desde, LocalDate hasta) {
         if (desde.isAfter(hasta)) {
-            throw new clinicasonrisafeliz.excepcion.DatoInvalidoException(
-                "La fecha de inicio (" + desde + ") no puede ser posterior a la fecha fin (" + hasta + ").");
+            throw new DatoInvalidoException(
+                    "La fecha de inicio (" + desde + ") no puede ser posterior a la fecha fin (" + hasta + ").");
         }
-        List<Turno> resultado = repositorioTurno.buscarPorRangoDeFechas(desde, hasta);
-        Collections.sort(resultado); // orden natural: fecha asc, hora asc
-        return resultado;
+        return repositorioTurno.buscarTodos()
+                .stream()
+                .filter(t -> !t.getFecha().isBefore(desde) && !t.getFecha().isAfter(hasta))
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

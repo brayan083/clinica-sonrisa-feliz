@@ -31,18 +31,30 @@ public class ServicioOdontologo {
     }
 
     public Odontologo buscarPorId(Long id) {
-        return repositorioOdontologo.buscarPorId(id)
-                .orElseThrow(() -> new OdontologoNoEncontradoException("No se encontró odontólogo con ID: " + id));
+        Odontologo odontologo = repositorioOdontologo.buscarPorId(id);
+        if (odontologo == null) {
+            throw new OdontologoNoEncontradoException("No se encontró odontólogo con ID: " + id);
+        }
+        return odontologo;
     }
 
     public Odontologo buscarPorMatricula(String matricula) {
-        return repositorioOdontologo.buscarPorMatricula(matricula)
-                .orElseThrow(() -> new OdontologoNoEncontradoException("No se encontró odontólogo con matrícula: " + matricula));
+        Odontologo odontologo = repositorioOdontologo.buscarPorMatricula(matricula);
+        if (odontologo == null) {
+            throw new OdontologoNoEncontradoException("No se encontró odontólogo con matrícula: " + matricula);
+        }
+        return odontologo;
     }
 
+    /**
+     * Lista todos los odontólogos ordenados alfabéticamente.
+     * Usa Stream API: sorted(Comparator) + collect, mostrando orden con Comparator externo.
+     */
     public List<Odontologo> listarTodos() {
-        return repositorioOdontologo.buscarTodos().stream()
-                .sorted(Comparator.comparing(Odontologo::getApellido).thenComparing(Odontologo::getNombre))
+        return repositorioOdontologo.buscarTodos()
+                .stream()
+                .sorted(Comparator.comparing(Odontologo::getApellido)
+                                  .thenComparing(Odontologo::getNombre))
                 .collect(Collectors.toList());
     }
 
@@ -53,11 +65,12 @@ public class ServicioOdontologo {
 
     public void eliminar(Long id) {
         Odontologo odontologo = buscarPorId(id);
-        boolean tieneTurnosFuturos = repositorioTurno.buscarPorOdontologoId(id).stream()
-                .anyMatch(Turno::esFuturo);
-        if (tieneTurnosFuturos) {
-            throw new IllegalStateException("No se puede eliminar: el odontólogo " +
-                    odontologo.getNombreCompleto() + " tiene turnos futuros asignados.");
+        List<Turno> turnosOdontologo = repositorioTurno.buscarPorOdontologoId(id);
+        for (Turno t : turnosOdontologo) {
+            if (t.esFuturo()) {
+                throw new IllegalStateException("No se puede eliminar: el odontólogo " +
+                        odontologo.getNombreCompleto() + " tiene turnos futuros asignados.");
+            }
         }
         repositorioOdontologo.eliminar(id);
     }

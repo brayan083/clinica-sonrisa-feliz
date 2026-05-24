@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class RepositorioPaciente implements IRepositorio<Paciente> {
 
@@ -19,8 +18,8 @@ public class RepositorioPaciente implements IRepositorio<Paciente> {
     }
 
     @Override
-    public Optional<Paciente> buscarPorId(Long id) {
-        return Optional.ofNullable(almacenamiento.get(id));
+    public Paciente buscarPorId(Long id) {
+        return almacenamiento.get(id); // devuelve null si no existe
     }
 
     @Override
@@ -38,14 +37,20 @@ public class RepositorioPaciente implements IRepositorio<Paciente> {
         almacenamiento.remove(id);
     }
 
-    public Optional<Paciente> buscarPorDni(String dni) {
-        return almacenamiento.values().stream()
-                .filter(p -> p.getDni().equals(dni))
-                .findFirst();
+    /** Busca un paciente por DNI exacto usando Iterator. Devuelve null si no existe. */
+    public Paciente buscarPorDni(String dni) {
+        Iterator<Paciente> iter = almacenamiento.values().iterator();
+        while (iter.hasNext()) {
+            Paciente p = iter.next();
+            if (p.getDni().equals(dni)) {
+                return p;
+            }
+        }
+        return null;
     }
 
     public boolean existeDni(String dni) {
-        return buscarPorDni(dni).isPresent();
+        return buscarPorDni(dni) != null;
     }
 
     /** Búsqueda parcial por apellido usando Iterator explícito. */

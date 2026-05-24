@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class RepositorioOdontologo implements IRepositorio<Odontologo> {
 
@@ -18,8 +17,8 @@ public class RepositorioOdontologo implements IRepositorio<Odontologo> {
     }
 
     @Override
-    public Optional<Odontologo> buscarPorId(Long id) {
-        return Optional.ofNullable(almacenamiento.get(id));
+    public Odontologo buscarPorId(Long id) {
+        return almacenamiento.get(id); // devuelve null si no existe
     }
 
     @Override
@@ -37,13 +36,17 @@ public class RepositorioOdontologo implements IRepositorio<Odontologo> {
         almacenamiento.remove(id);
     }
 
-    public Optional<Odontologo> buscarPorMatricula(String matricula) {
-        return almacenamiento.values().stream()
-                .filter(o -> o.getMatricula().equals(matricula))
-                .findFirst();
+    /** Busca un odontólogo por matrícula exacta con for-each. Devuelve null si no existe. */
+    public Odontologo buscarPorMatricula(String matricula) {
+        for (Odontologo o : almacenamiento.values()) {
+            if (o.getMatricula().equals(matricula)) {
+                return o;
+            }
+        }
+        return null;
     }
 
     public boolean existeMatricula(String matricula) {
-        return buscarPorMatricula(matricula).isPresent();
+        return buscarPorMatricula(matricula) != null;
     }
 }

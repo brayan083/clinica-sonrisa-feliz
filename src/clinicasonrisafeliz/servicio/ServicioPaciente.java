@@ -9,7 +9,6 @@ import clinicasonrisafeliz.repositorio.RepositorioPaciente;
 import clinicasonrisafeliz.repositorio.RepositorioTurno;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,26 +32,41 @@ public class ServicioPaciente {
     }
 
     public Paciente buscarPorId(Long id) {
-        return repositorioPaciente.buscarPorId(id)
-                .orElseThrow(() -> new PacienteNoEncontradoException("No se encontró paciente con ID: " + id));
+        Paciente paciente = repositorioPaciente.buscarPorId(id);
+        if (paciente == null) {
+            throw new PacienteNoEncontradoException("No se encontró paciente con ID: " + id);
+        }
+        return paciente;
     }
 
     public Paciente buscarPorDni(String dni) {
-        return repositorioPaciente.buscarPorDni(dni)
-                .orElseThrow(() -> new PacienteNoEncontradoException("No se encontró paciente con DNI: " + dni));
+        Paciente paciente = repositorioPaciente.buscarPorDni(dni);
+        if (paciente == null) {
+            throw new PacienteNoEncontradoException("No se encontró paciente con DNI: " + dni);
+        }
+        return paciente;
     }
 
+    /**
+     * Lista todos los pacientes ordenados alfabéticamente.
+     * Usa Collections.sort() con el orden natural definido en Paciente (Comparable).
+     */
     public List<Paciente> listarTodos() {
         List<Paciente> lista = repositorioPaciente.buscarTodos();
-        Collections.sort(lista); // orden natural definido en Paciente.compareTo
+        Collections.sort(lista);
         return lista;
     }
 
-    /** Busca pacientes cuyo apellido contenga el texto dado (sin distinción de mayúsculas). */
+    /**
+     * Busca pacientes cuyo apellido contenga el texto dado.
+     * Usa Stream API: filter para filtrar + sorted para ordenar (Comparable) + collect.
+     */
     public List<Paciente> buscarPorApellido(String apellido) {
-        List<Paciente> resultado = repositorioPaciente.buscarPorApellido(apellido);
-        Collections.sort(resultado);
-        return resultado;
+        return repositorioPaciente.buscarTodos()
+                .stream()
+                .filter(p -> p.getApellido().toLowerCase().contains(apellido.toLowerCase()))
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     public void actualizar(Paciente paciente) {
@@ -62,11 +76,12 @@ public class ServicioPaciente {
 
     public void eliminar(Long id) {
         Paciente paciente = buscarPorId(id);
-        boolean tieneTurnosFuturos = repositorioTurno.buscarPorPacienteId(id).stream()
-                .anyMatch(Turno::esFuturo);
-        if (tieneTurnosFuturos) {
-            throw new IllegalStateException("No se puede eliminar: el paciente " +
-                    paciente.getNombreCompleto() + " tiene turnos futuros asignados.");
+        List<Turno> turnosPaciente = repositorioTurno.buscarPorPacienteId(id);
+        for (Turno t : turnosPaciente) {
+            if (t.esFuturo()) {
+                throw new IllegalStateException("No se puede eliminar: el paciente " +
+                        paciente.getNombreCompleto() + " tiene turnos futuros asignados.");
+            }
         }
         repositorioPaciente.eliminar(id);
     }
