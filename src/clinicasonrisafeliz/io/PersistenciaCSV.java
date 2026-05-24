@@ -42,6 +42,8 @@ public class PersistenciaCSV {
                        + d.getLocalidad() + SEP + d.getProvincia());
                 bw.newLine();
             }
+        } catch (IOException e) {
+            throw new IOException("Error al guardar pacientes en CSV: " + e.getMessage(), e);
         }
     }
 
@@ -55,6 +57,8 @@ public class PersistenciaCSV {
                        + o.getEmail() + SEP + o.getMatricula());
                 bw.newLine();
             }
+        } catch (IOException e) {
+            throw new IOException("Error al guardar odontólogos en CSV: " + e.getMessage(), e);
         }
     }
 
@@ -69,28 +73,42 @@ public class PersistenciaCSV {
                        + t.getHora() + SEP + t.getEstado());
                 bw.newLine();
             }
+        } catch (IOException e) {
+            throw new IOException("Error al guardar turnos en CSV: " + e.getMessage(), e);
         }
     }
 
     // ─── CARGAR ─────────────────────────────────────────────────────────────
 
+    /**
+     * Carga pacientes desde CSV usando try-catch-finally para garantizar
+     * el cierre del reader incluso si ocurre una excepción durante la lectura.
+     */
     public static List<Paciente> cargarPacientes() throws IOException {
         List<Paciente> lista = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(PACIENTES_CSV))) {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(PACIENTES_CSV));
             br.readLine(); // saltar encabezado
             String linea;
             while ((linea = br.readLine()) != null) {
                 if (linea.isBlank()) continue;
                 String[] c = linea.split(SEP, -1);
-                long   id          = Long.parseLong(c[0]);
-                String nombre      = c[1];
-                String apellido    = c[2];
-                String email       = c[3];
-                String dni         = c[4];
-                LocalDate fechaIng = LocalDate.parse(c[5]);
-                long   domId       = Long.parseLong(c[6]);
-                Domicilio dom = new Domicilio(domId, c[7], c[8], c[9], c[10]);
+                long      id        = Long.parseLong(c[0]);
+                String    nombre    = c[1];
+                String    apellido  = c[2];
+                String    email     = c[3];
+                String    dni       = c[4];
+                LocalDate fechaIng  = LocalDate.parse(c[5]);
+                long      domId     = Long.parseLong(c[6]);
+                Domicilio dom       = new Domicilio(domId, c[7], c[8], c[9], c[10]);
                 lista.add(new Paciente(id, nombre, apellido, email, dni, fechaIng, dom));
+            }
+        } catch (IOException e) {
+            throw e; // propaga al llamador para que decida cómo manejarlo
+        } finally {
+            if (br != null) {
+                try { br.close(); } catch (IOException ignored) {}
             }
         }
         return lista;
@@ -106,6 +124,8 @@ public class PersistenciaCSV {
                 String[] c = linea.split(SEP, -1);
                 lista.add(new Odontologo(Long.parseLong(c[0]), c[1], c[2], c[3], c[4]));
             }
+        } catch (IOException e) {
+            throw new IOException("Error al cargar odontólogos desde CSV: " + e.getMessage(), e);
         }
         return lista;
     }
@@ -147,6 +167,8 @@ public class PersistenciaCSV {
                 odon.getAgenda().agregarTurno(t);
                 lista.add(t);
             }
+        } catch (IOException e) {
+            throw new IOException("Error al cargar turnos desde CSV: " + e.getMessage(), e);
         }
         return lista;
     }

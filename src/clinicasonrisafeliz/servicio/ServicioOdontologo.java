@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import clinicasonrisafeliz.excepcion.MatriculaDuplicadaException;
 import clinicasonrisafeliz.excepcion.OdontologoNoEncontradoException;
+import clinicasonrisafeliz.excepcion.OperacionNoPermitidaException;
 import clinicasonrisafeliz.modelo.Odontologo;
 import clinicasonrisafeliz.modelo.Turno;
 import clinicasonrisafeliz.repositorio.RepositorioOdontologo;
@@ -75,7 +76,7 @@ public class ServicioOdontologo {
         List<Turno> turnosOdontologo = repositorioTurno.buscarPorOdontologoId(id);
         for (Turno t : turnosOdontologo) {
             if (t.esFuturo()) {
-                throw new IllegalStateException("No se puede eliminar: el odontólogo " +
+                throw new OperacionNoPermitidaException("No se puede eliminar: el odontólogo " +
                         odontologo.getNombreCompleto() + " tiene turnos futuros asignados.");
             }
         }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import clinicasonrisafeliz.excepcion.DniDuplicadoException;
+import clinicasonrisafeliz.excepcion.OperacionNoPermitidaException;
 import clinicasonrisafeliz.excepcion.PacienteNoEncontradoException;
 import clinicasonrisafeliz.modelo.Domicilio;
 import clinicasonrisafeliz.modelo.Paciente;
@@ -97,7 +98,7 @@ public class ServicioPaciente {
         List<Turno> turnosPaciente = repositorioTurno.buscarPorPacienteId(id);
         for (Turno t : turnosPaciente) {
             if (t.esFuturo()) {
-                throw new IllegalStateException("No se puede eliminar: el paciente " +
+                throw new OperacionNoPermitidaException("No se puede eliminar: el paciente " +
                         paciente.getNombreCompleto() + " tiene turnos futuros asignados.");
             }
         }
