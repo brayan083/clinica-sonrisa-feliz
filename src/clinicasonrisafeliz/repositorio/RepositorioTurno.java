@@ -1,8 +1,10 @@
 package clinicasonrisafeliz.repositorio;
 
 import clinicasonrisafeliz.enums.EstadoTurno;
+import clinicasonrisafeliz.io.PersistenciaCSV;
 import clinicasonrisafeliz.modelo.Turno;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +13,12 @@ public class RepositorioTurno implements IRepositorio<Turno> {
 
     private final List<Turno> almacenamiento = new ArrayList<>();
 
+    // ── Operaciones CRUD (persisten automáticamente en CSV) ──────────────────
+
     @Override
     public void guardar(Turno turno) {
         almacenamiento.add(turno);
+        persistir();
     }
 
     @Override
@@ -23,7 +28,7 @@ public class RepositorioTurno implements IRepositorio<Turno> {
                 return t;
             }
         }
-        return null; // devuelve null si no existe
+        return null;
     }
 
     @Override
@@ -31,9 +36,13 @@ public class RepositorioTurno implements IRepositorio<Turno> {
         return new ArrayList<>(almacenamiento);
     }
 
+    /**
+     * Persiste el estado actual del turno (cambios de estado, fecha u hora).
+     * El turno ya existe en memoria; solo es necesario reescribir el CSV.
+     */
     @Override
     public void actualizar(Turno turno) {
-        // El turno ya es el mismo objeto en memoria; no se necesita reemplazar.
+        persistir();
     }
 
     @Override
@@ -47,6 +56,7 @@ public class RepositorioTurno implements IRepositorio<Turno> {
         }
         if (aEliminar != null) {
             almacenamiento.remove(aEliminar);
+            persistir();
         }
     }
 
@@ -98,5 +108,25 @@ public class RepositorioTurno implements IRepositorio<Turno> {
             }
         }
         return resultado;
+    }
+
+    // ── Carga inicial (sin persistir, evita escrituras innecesarias al arrancar) ──
+
+    /**
+     * Carga turnos en memoria desde una lista ya construida (ej: desde CSV).
+     * No dispara escritura a disco — se usa exclusivamente durante la carga inicial.
+     */
+    public void inicializar(List<Turno> turnos) {
+        almacenamiento.addAll(turnos);
+    }
+
+    // ── Persistencia ─────────────────────────────────────────────────────────
+
+    private void persistir() {
+        try {
+            PersistenciaCSV.guardarTurnos(buscarTodos());
+        } catch (IOException e) {
+            System.err.println("⚠ Error al persistir turnos: " + e.getMessage());
+        }
     }
 }

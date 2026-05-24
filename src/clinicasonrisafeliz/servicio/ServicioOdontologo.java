@@ -14,11 +14,12 @@ import java.util.stream.Collectors;
 public class ServicioOdontologo {
 
     private final RepositorioOdontologo repositorioOdontologo;
-    private final RepositorioTurno repositorioTurno;
+    private final RepositorioTurno      repositorioTurno;
 
-    public ServicioOdontologo(RepositorioOdontologo repositorioOdontologo, RepositorioTurno repositorioTurno) {
+    public ServicioOdontologo(RepositorioOdontologo repositorioOdontologo,
+                              RepositorioTurno repositorioTurno) {
         this.repositorioOdontologo = repositorioOdontologo;
-        this.repositorioTurno = repositorioTurno;
+        this.repositorioTurno      = repositorioTurno;
     }
 
     public Odontologo registrar(String nombre, String apellido, String email, String matricula) {
@@ -58,8 +59,15 @@ public class ServicioOdontologo {
                 .collect(Collectors.toList());
     }
 
-    public void actualizar(Odontologo odontologo) {
-        buscarPorId(odontologo.getId());
+    /**
+     * Actualiza los datos personales de un odontólogo a partir de sus campos individuales.
+     * La mutación del objeto de dominio ocurre aquí, en la capa de servicio.
+     */
+    public void actualizar(Long id, String nombre, String apellido, String email) {
+        Odontologo odontologo = buscarPorId(id);
+        odontologo.setNombre(nombre);
+        odontologo.setApellido(apellido);
+        odontologo.setEmail(email);
         repositorioOdontologo.actualizar(odontologo);
     }
 

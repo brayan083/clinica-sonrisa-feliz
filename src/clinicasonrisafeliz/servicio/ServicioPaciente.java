@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
 public class ServicioPaciente {
 
     private final RepositorioPaciente repositorioPaciente;
-    private final RepositorioTurno repositorioTurno;
+    private final RepositorioTurno    repositorioTurno;
 
-    public ServicioPaciente(RepositorioPaciente repositorioPaciente, RepositorioTurno repositorioTurno) {
+    public ServicioPaciente(RepositorioPaciente repositorioPaciente,
+                            RepositorioTurno repositorioTurno) {
         this.repositorioPaciente = repositorioPaciente;
-        this.repositorioTurno = repositorioTurno;
+        this.repositorioTurno    = repositorioTurno;
     }
 
     public Paciente registrar(String nombre, String apellido, String email, String dni, Domicilio domicilio) {
@@ -58,19 +59,37 @@ public class ServicioPaciente {
     }
 
     /**
-     * Busca pacientes cuyo apellido contenga el texto dado.
-     * Usa Stream API: filter para filtrar + sorted para ordenar (Comparable) + collect.
+     * Retorna los nombres completos de todos los pacientes en orden alfabético.
+     * Usa Stream API: sorted() con Comparable + map() para transformar a String + collect().
      */
-    public List<Paciente> buscarPorApellido(String apellido) {
+    public List<String> listarNombresCompletos() {
         return repositorioPaciente.buscarTodos()
                 .stream()
-                .filter(p -> p.getApellido().toLowerCase().contains(apellido.toLowerCase()))
+                .sorted()
+                .map(Paciente::getNombreCompleto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Busca pacientes cuyo apellido contenga el texto dado.
+     * El repositorio realiza la búsqueda (Iterator); el servicio ordena el resultado (Stream + Comparable).
+     */
+    public List<Paciente> buscarPorApellido(String apellido) {
+        return repositorioPaciente.buscarPorApellido(apellido)
+                .stream()
                 .sorted()
                 .collect(Collectors.toList());
     }
 
-    public void actualizar(Paciente paciente) {
-        buscarPorId(paciente.getId());
+    /**
+     * Actualiza los datos personales de un paciente a partir de sus campos individuales.
+     * La mutación del objeto de dominio ocurre aquí, en la capa de servicio.
+     */
+    public void actualizar(Long id, String nombre, String apellido, String email) {
+        Paciente paciente = buscarPorId(id);
+        paciente.setNombre(nombre);
+        paciente.setApellido(apellido);
+        paciente.setEmail(email);
         repositorioPaciente.actualizar(paciente);
     }
 

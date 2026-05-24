@@ -8,11 +8,11 @@ import java.util.List;
 public class MenuOdontologos {
 
     private final ControladorOdontologo controladorOdontologo;
-    private final ConsolaUtils utils;
+    private final ConsolaUtils          utils;
 
     public MenuOdontologos(ControladorOdontologo controladorOdontologo, ConsolaUtils utils) {
         this.controladorOdontologo = controladorOdontologo;
-        this.utils = utils;
+        this.utils                 = utils;
     }
 
     public void mostrar() {
@@ -57,9 +57,9 @@ public class MenuOdontologos {
     private void registrar() {
         System.out.println("\n--- Registrar Odontólogo ---");
         try {
-            String nombre = utils.leerTexto("Nombre: ");
-            String apellido = utils.leerTexto("Apellido: ");
-            String email = utils.leerTexto("Email: ");
+            String nombre    = utils.leerTexto("Nombre: ");
+            String apellido  = utils.leerTexto("Apellido: ");
+            String email     = utils.leerTexto("Email: ");
             String matricula = utils.leerTexto("Matrícula: ");
             Odontologo o = controladorOdontologo.registrar(nombre, apellido, email, matricula);
             System.out.println("✓ Odontólogo registrado con ID " + o.getId() + ": " + o.getNombreCompleto());
@@ -92,13 +92,10 @@ public class MenuOdontologos {
             Odontologo o = controladorOdontologo.buscarPorId(id);
             System.out.println("Datos actuales: " + o);
             System.out.println("(Deje en blanco para no modificar)");
-            String nombre = utils.leerTextoOpcional("Nuevo nombre [" + o.getNombre() + "]: ", o.getNombre());
+            String nombre   = utils.leerTextoOpcional("Nuevo nombre [" + o.getNombre() + "]: ", o.getNombre());
             String apellido = utils.leerTextoOpcional("Nuevo apellido [" + o.getApellido() + "]: ", o.getApellido());
-            String email = utils.leerTextoOpcional("Nuevo email [" + o.getEmail() + "]: ", o.getEmail());
-            o.setNombre(nombre);
-            o.setApellido(apellido);
-            o.setEmail(email);
-            controladorOdontologo.actualizar(o);
+            String email    = utils.leerTextoOpcional("Nuevo email [" + o.getEmail() + "]: ", o.getEmail());
+            controladorOdontologo.actualizar(id, nombre, apellido, email);
             System.out.println("✓ Odontólogo actualizado.");
         } catch (Exception e) {
             System.out.println("✗ " + e.getMessage());

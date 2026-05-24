@@ -9,11 +9,11 @@ import java.util.List;
 public class MenuPacientes {
 
     private final ControladorPaciente controladorPaciente;
-    private final ConsolaUtils utils;
+    private final ConsolaUtils        utils;
 
     public MenuPacientes(ControladorPaciente controladorPaciente, ConsolaUtils utils) {
         this.controladorPaciente = controladorPaciente;
-        this.utils = utils;
+        this.utils               = utils;
     }
 
     public void mostrar() {
@@ -24,9 +24,10 @@ public class MenuPacientes {
             System.out.println("2. Buscar por ID");
             System.out.println("3. Buscar por DNI");
             System.out.println("4. Buscar por apellido");
-            System.out.println("5. Listar todos");
-            System.out.println("6. Modificar paciente");
-            System.out.println("7. Eliminar paciente");
+            System.out.println("5. Listar todos (detallado)");
+            System.out.println("6. Listar nombres (compacto)");
+            System.out.println("7. Modificar paciente");
+            System.out.println("8. Eliminar paciente");
             System.out.println("0. Volver");
             opcion = utils.leerEntero("Seleccione una opción: ");
             switch (opcion) {
@@ -35,8 +36,9 @@ public class MenuPacientes {
                 case 3 -> buscarPorDni();
                 case 4 -> buscarPorApellido();
                 case 5 -> listarTodos();
-                case 6 -> modificar();
-                case 7 -> eliminar();
+                case 6 -> listarNombresCompletos();
+                case 7 -> modificar();
+                case 8 -> eliminar();
                 case 0 -> {}
                 default -> System.out.println("Opción inválida.");
             }
@@ -57,16 +59,26 @@ public class MenuPacientes {
         lista.forEach(p -> System.out.println("  [" + p.getId() + "] " + p.getNombreCompleto() + " - DNI: " + p.getDni()));
     }
 
+    private void listarNombresCompletos() {
+        List<String> nombres = controladorPaciente.listarNombresCompletos();
+        if (nombres.isEmpty()) {
+            System.out.println("No hay pacientes registrados.");
+            return;
+        }
+        System.out.println("\n--- Pacientes (listado compacto) ---");
+        nombres.forEach(n -> System.out.println("  " + n));
+    }
+
     private void registrar() {
         System.out.println("\n--- Registrar Paciente ---");
         try {
-            String nombre = utils.leerTexto("Nombre: ");
-            String apellido = utils.leerTexto("Apellido: ");
-            String email = utils.leerTexto("Email: ");
-            String dni = utils.leerTexto("DNI: ");
+            String nombre    = utils.leerTexto("Nombre: ");
+            String apellido  = utils.leerTexto("Apellido: ");
+            String email     = utils.leerTexto("Email: ");
+            String dni       = utils.leerTexto("DNI: ");
             System.out.println("  [Domicilio]");
-            String calle = utils.leerTexto("  Calle: ");
-            String numero = utils.leerTexto("  Número: ");
+            String calle     = utils.leerTexto("  Calle: ");
+            String numero    = utils.leerTexto("  Número: ");
             String localidad = utils.leerTexto("  Localidad: ");
             String provincia = utils.leerTexto("  Provincia: ");
             Domicilio domicilio = new Domicilio(calle, numero, localidad, provincia);
@@ -117,13 +129,10 @@ public class MenuPacientes {
             Paciente p = controladorPaciente.buscarPorId(id);
             System.out.println("Datos actuales: " + p);
             System.out.println("(Deje en blanco para no modificar)");
-            String nombre = utils.leerTextoOpcional("Nuevo nombre [" + p.getNombre() + "]: ", p.getNombre());
+            String nombre   = utils.leerTextoOpcional("Nuevo nombre [" + p.getNombre() + "]: ", p.getNombre());
             String apellido = utils.leerTextoOpcional("Nuevo apellido [" + p.getApellido() + "]: ", p.getApellido());
-            String email = utils.leerTextoOpcional("Nuevo email [" + p.getEmail() + "]: ", p.getEmail());
-            p.setNombre(nombre);
-            p.setApellido(apellido);
-            p.setEmail(email);
-            controladorPaciente.actualizar(p);
+            String email    = utils.leerTextoOpcional("Nuevo email [" + p.getEmail() + "]: ", p.getEmail());
+            controladorPaciente.actualizar(id, nombre, apellido, email);
             System.out.println("✓ Paciente actualizado.");
         } catch (Exception e) {
             System.out.println("✗ " + e.getMessage());

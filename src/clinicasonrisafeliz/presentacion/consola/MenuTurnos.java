@@ -11,18 +11,18 @@ import java.util.List;
 public class MenuTurnos {
 
     private final ControladorTurno controladorTurno;
-    private final MenuPacientes menuPacientes;
-    private final MenuOdontologos menuOdontologos;
-    private final ConsolaUtils utils;
+    private final MenuPacientes    menuPacientes;
+    private final MenuOdontologos  menuOdontologos;
+    private final ConsolaUtils     utils;
 
     public MenuTurnos(ControladorTurno controladorTurno,
                       MenuPacientes menuPacientes,
                       MenuOdontologos menuOdontologos,
                       ConsolaUtils utils) {
         this.controladorTurno = controladorTurno;
-        this.menuPacientes = menuPacientes;
-        this.menuOdontologos = menuOdontologos;
-        this.utils = utils;
+        this.menuPacientes    = menuPacientes;
+        this.menuOdontologos  = menuOdontologos;
+        this.utils            = utils;
     }
 
     public void mostrar() {
@@ -76,7 +76,7 @@ public class MenuTurnos {
             menuOdontologos.listarTodos();
             Long odontologoId = utils.leerLong("ID del odontólogo: ");
             LocalDate fecha = utils.leerFecha("Fecha (AAAA-MM-DD): ");
-            LocalTime hora = utils.leerHora("Hora (HH:MM): ");
+            LocalTime hora  = utils.leerHora("Hora (HH:MM): ");
             Turno turno = controladorTurno.reservar(pacienteId, odontologoId, fecha, hora);
             System.out.println("✓ Turno reservado con ID " + turno.getId() + ": " + turno);
         } catch (Exception e) {
@@ -131,7 +131,7 @@ public class MenuTurnos {
             Turno turno = controladorTurno.buscarPorId(id);
             System.out.println("Turno actual: " + turno);
             LocalDate nuevaFecha = utils.leerFecha("Nueva fecha (AAAA-MM-DD): ");
-            LocalTime nuevaHora = utils.leerHora("Nueva hora (HH:MM): ");
+            LocalTime nuevaHora  = utils.leerHora("Nueva hora (HH:MM): ");
             controladorTurno.modificar(id, nuevaFecha, nuevaHora);
             System.out.println("✓ Turno modificado.");
         } catch (Exception e) {
@@ -200,4 +200,6 @@ public class MenuTurnos {
         }
         lista.forEach(t -> System.out.println("  [" + t.getId() + "] " + t));
     }
+
+
 }

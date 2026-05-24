@@ -1,4 +1,4 @@
-package clinicasonrisafeliz.repositorio;
+package clinicasonrisafeliz.io;
 
 import clinicasonrisafeliz.enums.EstadoTurno;
 import clinicasonrisafeliz.modelo.*;

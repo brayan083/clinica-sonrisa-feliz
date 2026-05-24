@@ -1,15 +1,5 @@
 package clinicasonrisafeliz.servicio;
 
-import clinicasonrisafeliz.enums.EstadoTurno;
-import clinicasonrisafeliz.excepcion.DatoInvalidoException;
-import clinicasonrisafeliz.excepcion.FechaInvalidaException;
-import clinicasonrisafeliz.excepcion.TurnoNoEncontradoException;
-import clinicasonrisafeliz.excepcion.TurnoYaReservadoException;
-import clinicasonrisafeliz.modelo.Odontologo;
-import clinicasonrisafeliz.modelo.Paciente;
-import clinicasonrisafeliz.modelo.Turno;
-import clinicasonrisafeliz.repositorio.RepositorioTurno;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -17,18 +7,30 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import clinicasonrisafeliz.enums.EstadoTurno;
+import clinicasonrisafeliz.excepcion.DatoInvalidoException;
+import clinicasonrisafeliz.excepcion.FechaInvalidaException;
+import clinicasonrisafeliz.excepcion.OdontologoNoEncontradoException;
+import clinicasonrisafeliz.excepcion.PacienteNoEncontradoException;
+import clinicasonrisafeliz.excepcion.TurnoNoEncontradoException;
+import clinicasonrisafeliz.excepcion.TurnoYaReservadoException;
+import clinicasonrisafeliz.modelo.Odontologo;
+import clinicasonrisafeliz.modelo.Paciente;
+import clinicasonrisafeliz.modelo.Turno;
+import clinicasonrisafeliz.repositorio.RepositorioOdontologo;
+import clinicasonrisafeliz.repositorio.RepositorioPaciente;
+import clinicasonrisafeliz.repositorio.RepositorioTurno;
+
 public class ServicioTurno {
 
-    private final RepositorioTurno repositorioTurno;
-    private final ServicioPaciente servicioPaciente;
-    private final ServicioOdontologo servicioOdontologo;
+    private final RepositorioTurno      repositorioTurno;
+    private final RepositorioPaciente   repositorioPaciente;
+    private final RepositorioOdontologo repositorioOdontologo;
 
-    public ServicioTurno(RepositorioTurno repositorioTurno,
-                         ServicioPaciente servicioPaciente,
-                         ServicioOdontologo servicioOdontologo) {
-        this.repositorioTurno   = repositorioTurno;
-        this.servicioPaciente   = servicioPaciente;
-        this.servicioOdontologo = servicioOdontologo;
+    public ServicioTurno(RepositorioTurno repositorioTurno, RepositorioPaciente repositorioPaciente, RepositorioOdontologo repositorioOdontologo) {
+        this.repositorioTurno      = repositorioTurno;
+        this.repositorioPaciente   = repositorioPaciente;
+        this.repositorioOdontologo = repositorioOdontologo;
     }
 
     public Turno reservar(Long pacienteId, Long odontologoId, LocalDate fecha, LocalTime hora) {
@@ -36,8 +38,15 @@ public class ServicioTurno {
             throw new FechaInvalidaException("No se puede reservar un turno en una fecha pasada: " + fecha);
         }
 
-        Paciente   paciente   = servicioPaciente.buscarPorId(pacienteId);
-        Odontologo odontologo = servicioOdontologo.buscarPorId(odontologoId);
+        Paciente paciente = repositorioPaciente.buscarPorId(pacienteId);
+        if (paciente == null) {
+            throw new PacienteNoEncontradoException("No se encontró paciente con ID: " + pacienteId);
+        }
+
+        Odontologo odontologo = repositorioOdontologo.buscarPorId(odontologoId);
+        if (odontologo == null) {
+            throw new OdontologoNoEncontradoException("No se encontró odontólogo con ID: " + odontologoId);
+        }
 
         if (!odontologo.getAgenda().estaDisponible(fecha, hora)) {
             throw new TurnoYaReservadoException("El odontólogo " + odontologo.getNombreCompleto() +
@@ -62,16 +71,19 @@ public class ServicioTurno {
     public void confirmar(Long turnoId) {
         Turno turno = buscarPorId(turnoId);
         turno.setEstado(EstadoTurno.CONFIRMADO);
+        repositorioTurno.actualizar(turno);
     }
 
     public void cancelar(Long turnoId) {
         Turno turno = buscarPorId(turnoId);
         turno.setEstado(EstadoTurno.CANCELADO);
+        repositorioTurno.actualizar(turno);
     }
 
     public void completar(Long turnoId) {
         Turno turno = buscarPorId(turnoId);
         turno.setEstado(EstadoTurno.COMPLETADO);
+        repositorioTurno.actualizar(turno);
     }
 
     public void modificar(Long turnoId, LocalDate nuevaFecha, LocalTime nuevaHora) {
@@ -105,9 +117,13 @@ public class ServicioTurno {
 
     /**
      * Filtra los turnos de un paciente y los ordena con Stream API + sorted() (Comparable).
+     * El repositorio resuelve la búsqueda por ID; el servicio ordena el resultado.
      */
     public List<Turno> listarPorPaciente(Long pacienteId) {
-        servicioPaciente.buscarPorId(pacienteId);
+        Paciente paciente = repositorioPaciente.buscarPorId(pacienteId);
+        if (paciente == null) {
+            throw new PacienteNoEncontradoException("No se encontró paciente con ID: " + pacienteId);
+        }
         return repositorioTurno.buscarPorPacienteId(pacienteId)
                 .stream()
                 .sorted()
@@ -116,9 +132,13 @@ public class ServicioTurno {
 
     /**
      * Filtra los turnos de un odontólogo y los ordena con Stream API + sorted() (Comparable).
+     * El repositorio resuelve la búsqueda por ID; el servicio ordena el resultado.
      */
     public List<Turno> listarPorOdontologo(Long odontologoId) {
-        servicioOdontologo.buscarPorId(odontologoId);
+        Odontologo odontologo = repositorioOdontologo.buscarPorId(odontologoId);
+        if (odontologo == null) {
+            throw new OdontologoNoEncontradoException("No se encontró odontólogo con ID: " + odontologoId);
+        }
         return repositorioTurno.buscarPorOdontologoId(odontologoId)
                 .stream()
                 .sorted()
@@ -148,16 +168,15 @@ public class ServicioTurno {
 
     /**
      * Busca turnos en el rango [desde, hasta] inclusive.
-     * Usa Stream API: filter (predicado de fechas) + sorted (Comparable) + collect.
+     * El repositorio filtra por rango; el servicio ordena con Stream + Comparable.
      */
     public List<Turno> listarPorRangoDeFechas(LocalDate desde, LocalDate hasta) {
         if (desde.isAfter(hasta)) {
             throw new DatoInvalidoException(
                     "La fecha de inicio (" + desde + ") no puede ser posterior a la fecha fin (" + hasta + ").");
         }
-        return repositorioTurno.buscarTodos()
+        return repositorioTurno.buscarPorRangoDeFechas(desde, hasta)
                 .stream()
-                .filter(t -> !t.getFecha().isBefore(desde) && !t.getFecha().isAfter(hasta))
                 .sorted()
                 .collect(Collectors.toList());
     }
