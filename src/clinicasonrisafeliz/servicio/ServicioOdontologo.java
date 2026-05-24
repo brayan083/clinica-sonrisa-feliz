@@ -1,5 +1,9 @@
 package clinicasonrisafeliz.servicio;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import clinicasonrisafeliz.excepcion.MatriculaDuplicadaException;
 import clinicasonrisafeliz.excepcion.OdontologoNoEncontradoException;
 import clinicasonrisafeliz.modelo.Odontologo;
@@ -7,17 +11,12 @@ import clinicasonrisafeliz.modelo.Turno;
 import clinicasonrisafeliz.repositorio.RepositorioOdontologo;
 import clinicasonrisafeliz.repositorio.RepositorioTurno;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class ServicioOdontologo {
 
     private final RepositorioOdontologo repositorioOdontologo;
     private final RepositorioTurno      repositorioTurno;
 
-    public ServicioOdontologo(RepositorioOdontologo repositorioOdontologo,
-                              RepositorioTurno repositorioTurno) {
+    public ServicioOdontologo(RepositorioOdontologo repositorioOdontologo, RepositorioTurno repositorioTurno) {
         this.repositorioOdontologo = repositorioOdontologo;
         this.repositorioTurno      = repositorioTurno;
     }

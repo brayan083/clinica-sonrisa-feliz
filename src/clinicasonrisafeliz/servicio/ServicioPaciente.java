@@ -1,5 +1,9 @@
 package clinicasonrisafeliz.servicio;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import clinicasonrisafeliz.excepcion.DniDuplicadoException;
 import clinicasonrisafeliz.excepcion.PacienteNoEncontradoException;
 import clinicasonrisafeliz.modelo.Domicilio;
@@ -8,17 +12,12 @@ import clinicasonrisafeliz.modelo.Turno;
 import clinicasonrisafeliz.repositorio.RepositorioPaciente;
 import clinicasonrisafeliz.repositorio.RepositorioTurno;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class ServicioPaciente {
 
     private final RepositorioPaciente repositorioPaciente;
     private final RepositorioTurno    repositorioTurno;
 
-    public ServicioPaciente(RepositorioPaciente repositorioPaciente,
-                            RepositorioTurno repositorioTurno) {
+    public ServicioPaciente(RepositorioPaciente repositorioPaciente, RepositorioTurno repositorioTurno) {
         this.repositorioPaciente = repositorioPaciente;
         this.repositorioTurno    = repositorioTurno;
     }
