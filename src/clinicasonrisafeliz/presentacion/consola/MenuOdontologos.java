@@ -59,22 +59,18 @@ public class MenuOdontologos {
         try {
             String nombre    = utils.leerTexto("Nombre: ");
             String apellido  = utils.leerTexto("Apellido: ");
-            String email     = utils.leerTexto("Email: ");
+            String email     = utils.leerEmail("Email: ");
             String matricula = utils.leerTexto("Matrícula: ");
             Odontologo o = controladorOdontologo.registrar(nombre, apellido, email, matricula);
             System.out.println("✓ Odontólogo registrado con ID " + o.getId() + ": " + o.getNombreCompleto());
         } catch (Exception e) {
-            System.out.println("✗ Error: " + e.getMessage());
+            System.out.println("✗ " + e.getMessage());
         }
     }
 
     private void buscarPorId() {
-        try {
-            Long id = utils.leerLong("ID del odontólogo: ");
-            System.out.println(controladorOdontologo.buscarPorId(id));
-        } catch (Exception e) {
-            System.out.println("✗ " + e.getMessage());
-        }
+        Long id = utils.leerIdExistente("ID del odontólogo: ", controladorOdontologo::buscarPorId);
+        System.out.println(controladorOdontologo.buscarPorId(id));
     }
 
     private void buscarPorMatricula() {
@@ -87,14 +83,15 @@ public class MenuOdontologos {
     }
 
     private void modificar() {
+        listarTodos();
+        Long id = utils.leerIdExistente("ID del odontólogo a modificar: ", controladorOdontologo::buscarPorId);
+        Odontologo o = controladorOdontologo.buscarPorId(id);
+        System.out.println("Datos actuales: " + o);
+        System.out.println("(Deje en blanco para no modificar)");
+        String nombre   = utils.leerTextoOpcional("Nuevo nombre [" + o.getNombre() + "]: ", o.getNombre());
+        String apellido = utils.leerTextoOpcional("Nuevo apellido [" + o.getApellido() + "]: ", o.getApellido());
+        String email    = utils.leerEmailOpcional("Nuevo email [" + o.getEmail() + "]: ", o.getEmail());
         try {
-            Long id = utils.leerLong("ID del odontólogo a modificar: ");
-            Odontologo o = controladorOdontologo.buscarPorId(id);
-            System.out.println("Datos actuales: " + o);
-            System.out.println("(Deje en blanco para no modificar)");
-            String nombre   = utils.leerTextoOpcional("Nuevo nombre [" + o.getNombre() + "]: ", o.getNombre());
-            String apellido = utils.leerTextoOpcional("Nuevo apellido [" + o.getApellido() + "]: ", o.getApellido());
-            String email    = utils.leerTextoOpcional("Nuevo email [" + o.getEmail() + "]: ", o.getEmail());
             controladorOdontologo.actualizar(id, nombre, apellido, email);
             System.out.println("✓ Odontólogo actualizado.");
         } catch (Exception e) {
@@ -103,14 +100,15 @@ public class MenuOdontologos {
     }
 
     private void eliminar() {
+        listarTodos();
+        Long id = utils.leerIdExistente("ID del odontólogo a eliminar: ", controladorOdontologo::buscarPorId);
+        Odontologo o = controladorOdontologo.buscarPorId(id);
+        System.out.println("Odontólogo a eliminar: [" + o.getId() + "] Dr/Dra. " + o.getNombreCompleto() + " - Mat: " + o.getMatricula());
+        if (!utils.confirmar("¿Está seguro que desea eliminar este odontólogo?")) {
+            System.out.println("Operación cancelada.");
+            return;
+        }
         try {
-            Long id = utils.leerLong("ID del odontólogo a eliminar: ");
-            Odontologo o = controladorOdontologo.buscarPorId(id);
-            System.out.println("Odontólogo a eliminar: [" + o.getId() + "] Dr/Dra. " + o.getNombreCompleto() + " - Mat: " + o.getMatricula());
-            if (!utils.confirmar("¿Está seguro que desea eliminar este odontólogo?")) {
-                System.out.println("Operación cancelada.");
-                return;
-            }
             controladorOdontologo.eliminar(id);
             System.out.println("✓ Odontólogo eliminado.");
         } catch (Exception e) {

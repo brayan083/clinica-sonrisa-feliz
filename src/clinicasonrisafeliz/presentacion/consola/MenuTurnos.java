@@ -66,21 +66,27 @@ public class MenuTurnos {
 
     private void reservar() {
         System.out.println("\n--- Reservar Turno ---");
+        if (!menuPacientes.hayPacientes()) {
+            System.out.println("✗ No hay pacientes registrados. Registre un paciente antes de reservar un turno.");
+            return;
+        }
+        if (!menuOdontologos.hayOdontologos()) {
+            System.out.println("✗ No hay odontólogos registrados. Registre un odontólogo antes de reservar un turno.");
+            return;
+        }
+
+        menuPacientes.listarTodos();
+        Long pacienteId = utils.leerIdExistente("ID del paciente: ",
+                id -> controladorTurno.buscarPacientePorId(id));
+
+        menuOdontologos.listarTodos();
+        Long odontologoId = utils.leerIdExistente("ID del odontólogo: ",
+                id -> controladorTurno.buscarOdontologoPorId(id));
+
+        LocalDate fecha = utils.leerFechaNoPassada("Fecha (AAAA-MM-DD): ");
+        LocalTime hora  = utils.leerHora("Hora (HH:MM): ");
+
         try {
-            if (!menuPacientes.hayPacientes()) {
-                System.out.println("✗ No hay pacientes registrados. Registre un paciente antes de reservar un turno.");
-                return;
-            }
-            if (!menuOdontologos.hayOdontologos()) {
-                System.out.println("✗ No hay odontólogos registrados. Registre un odontólogo antes de reservar un turno.");
-                return;
-            }
-            menuPacientes.listarTodos();
-            Long pacienteId = utils.leerLong("ID del paciente: ");
-            menuOdontologos.listarTodos();
-            Long odontologoId = utils.leerLong("ID del odontólogo: ");
-            LocalDate fecha = utils.leerFecha("Fecha (AAAA-MM-DD): ");
-            LocalTime hora  = utils.leerHora("Hora (HH:MM): ");
             Turno turno = controladorTurno.reservar(pacienteId, odontologoId, fecha, hora, operador);
             System.out.println("✓ Turno reservado con ID " + turno.getId() + ": " + turno);
         } catch (Exception e) {
@@ -89,23 +95,19 @@ public class MenuTurnos {
     }
 
     private void buscarPorId() {
-        try {
-            Long id = utils.leerLong("ID del turno: ");
-            System.out.println(controladorTurno.buscarPorId(id));
-        } catch (Exception e) {
-            System.out.println("✗ " + e.getMessage());
-        }
+        Long id = utils.leerIdExistente("ID del turno: ", controladorTurno::buscarPorId);
+        System.out.println(controladorTurno.buscarPorId(id));
     }
 
     private void confirmar() {
+        Long id = utils.leerIdExistente("ID del turno a confirmar: ", controladorTurno::buscarPorId);
+        Turno turno = controladorTurno.buscarPorId(id);
+        System.out.println("Turno: " + turno);
+        if (!utils.confirmar("¿Confirmar este turno?")) {
+            System.out.println("Operación cancelada.");
+            return;
+        }
         try {
-            Long id = utils.leerLong("ID del turno a confirmar: ");
-            Turno turno = controladorTurno.buscarPorId(id);
-            System.out.println("Turno: " + turno);
-            if (!utils.confirmar("¿Confirmar este turno?")) {
-                System.out.println("Operación cancelada.");
-                return;
-            }
             controladorTurno.confirmar(id);
             System.out.println("✓ Turno confirmado.");
         } catch (Exception e) {
@@ -114,14 +116,14 @@ public class MenuTurnos {
     }
 
     private void cancelar() {
+        Long id = utils.leerIdExistente("ID del turno a cancelar: ", controladorTurno::buscarPorId);
+        Turno turno = controladorTurno.buscarPorId(id);
+        System.out.println("Turno: " + turno);
+        if (!utils.confirmar("¿Está seguro que desea cancelar este turno?")) {
+            System.out.println("Operación cancelada.");
+            return;
+        }
         try {
-            Long id = utils.leerLong("ID del turno a cancelar: ");
-            Turno turno = controladorTurno.buscarPorId(id);
-            System.out.println("Turno: " + turno);
-            if (!utils.confirmar("¿Está seguro que desea cancelar este turno?")) {
-                System.out.println("Operación cancelada.");
-                return;
-            }
             controladorTurno.cancelar(id);
             System.out.println("✓ Turno cancelado.");
         } catch (Exception e) {
@@ -130,12 +132,12 @@ public class MenuTurnos {
     }
 
     private void modificar() {
+        Long id = utils.leerIdExistente("ID del turno a modificar: ", controladorTurno::buscarPorId);
+        Turno turno = controladorTurno.buscarPorId(id);
+        System.out.println("Turno actual: " + turno);
+        LocalDate nuevaFecha = utils.leerFechaNoPassada("Nueva fecha (AAAA-MM-DD): ");
+        LocalTime nuevaHora  = utils.leerHora("Nueva hora (HH:MM): ");
         try {
-            Long id = utils.leerLong("ID del turno a modificar: ");
-            Turno turno = controladorTurno.buscarPorId(id);
-            System.out.println("Turno actual: " + turno);
-            LocalDate nuevaFecha = utils.leerFecha("Nueva fecha (AAAA-MM-DD): ");
-            LocalTime nuevaHora  = utils.leerHora("Nueva hora (HH:MM): ");
             controladorTurno.modificar(id, nuevaFecha, nuevaHora);
             System.out.println("✓ Turno modificado.");
         } catch (Exception e) {
@@ -148,32 +150,22 @@ public class MenuTurnos {
     }
 
     private void listarPorPaciente() {
-        try {
-            menuPacientes.listarTodos();
-            Long id = utils.leerLong("ID del paciente: ");
-            imprimir(controladorTurno.listarPorPaciente(id));
-        } catch (Exception e) {
-            System.out.println("✗ " + e.getMessage());
-        }
+        menuPacientes.listarTodos();
+        Long id = utils.leerIdExistente("ID del paciente: ",
+                pid -> controladorTurno.buscarPacientePorId(pid));
+        imprimir(controladorTurno.listarPorPaciente(id));
     }
 
     private void listarPorOdontologo() {
-        try {
-            menuOdontologos.listarTodos();
-            Long id = utils.leerLong("ID del odontólogo: ");
-            imprimir(controladorTurno.listarPorOdontologo(id));
-        } catch (Exception e) {
-            System.out.println("✗ " + e.getMessage());
-        }
+        menuOdontologos.listarTodos();
+        Long id = utils.leerIdExistente("ID del odontólogo: ",
+                oid -> controladorTurno.buscarOdontologoPorId(oid));
+        imprimir(controladorTurno.listarPorOdontologo(id));
     }
 
     private void listarPorFecha() {
-        try {
-            LocalDate fecha = utils.leerFecha("Fecha (AAAA-MM-DD): ");
-            imprimir(controladorTurno.listarPorFecha(fecha));
-        } catch (Exception e) {
-            System.out.println("✗ " + e.getMessage());
-        }
+        LocalDate fecha = utils.leerFecha("Fecha (AAAA-MM-DD): ");
+        imprimir(controladorTurno.listarPorFecha(fecha));
     }
 
     private void listarPorRangoDeFechas() {
@@ -204,6 +196,4 @@ public class MenuTurnos {
         }
         lista.forEach(t -> System.out.println("  [" + t.getId() + "] " + t));
     }
-
-
 }

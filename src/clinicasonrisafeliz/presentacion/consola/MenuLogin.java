@@ -36,7 +36,7 @@ public class MenuLogin {
         System.out.println("\n--- Registro de Recepcionista ---");
         String nombre   = utils.leerTexto("Nombre: ");
         String apellido = utils.leerTexto("Apellido: ");
-        String email    = utils.leerTexto("Email: ");
+        String email    = utils.leerEmail("Email: ");
         String legajo   = utils.leerTexto("Legajo: ");
         try {
             Recepcionista r = controlador.registrar(nombre, apellido, email, legajo);

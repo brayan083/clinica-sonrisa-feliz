@@ -74,7 +74,7 @@ public class MenuPacientes {
         try {
             String nombre    = utils.leerTexto("Nombre: ");
             String apellido  = utils.leerTexto("Apellido: ");
-            String email     = utils.leerTexto("Email: ");
+            String email     = utils.leerEmail("Email: ");
             String dni       = utils.leerTexto("DNI: ");
             System.out.println("  [Domicilio]");
             String calle     = utils.leerTexto("  Calle: ");
@@ -85,17 +85,13 @@ public class MenuPacientes {
             Paciente p = controladorPaciente.registrar(nombre, apellido, email, dni, domicilio);
             System.out.println("✓ Paciente registrado con ID " + p.getId() + ": " + p.getNombreCompleto());
         } catch (Exception e) {
-            System.out.println("✗ Error: " + e.getMessage());
+            System.out.println("✗ " + e.getMessage());
         }
     }
 
     private void buscarPorId() {
-        try {
-            Long id = utils.leerLong("ID del paciente: ");
-            System.out.println(controladorPaciente.buscarPorId(id));
-        } catch (Exception e) {
-            System.out.println("✗ " + e.getMessage());
-        }
+        Long id = utils.leerIdExistente("ID del paciente: ", controladorPaciente::buscarPorId);
+        System.out.println(controladorPaciente.buscarPorId(id));
     }
 
     private void buscarPorDni() {
@@ -108,30 +104,27 @@ public class MenuPacientes {
     }
 
     private void buscarPorApellido() {
-        try {
-            String apellido = utils.leerTexto("Apellido (o parte): ");
-            List<Paciente> resultados = controladorPaciente.buscarPorApellido(apellido);
-            if (resultados.isEmpty()) {
-                System.out.println("No se encontraron pacientes con ese apellido.");
-            } else {
-                System.out.println("\n--- Resultados ---");
-                resultados.forEach(p ->
-                    System.out.println("  [" + p.getId() + "] " + p.getNombreCompleto() + " - DNI: " + p.getDni()));
-            }
-        } catch (Exception e) {
-            System.out.println("✗ " + e.getMessage());
+        String apellido = utils.leerTexto("Apellido (o parte): ");
+        List<Paciente> resultados = controladorPaciente.buscarPorApellido(apellido);
+        if (resultados.isEmpty()) {
+            System.out.println("No se encontraron pacientes con ese apellido.");
+        } else {
+            System.out.println("\n--- Resultados ---");
+            resultados.forEach(p ->
+                System.out.println("  [" + p.getId() + "] " + p.getNombreCompleto() + " - DNI: " + p.getDni()));
         }
     }
 
     private void modificar() {
+        listarTodos();
+        Long id = utils.leerIdExistente("ID del paciente a modificar: ", controladorPaciente::buscarPorId);
+        Paciente p = controladorPaciente.buscarPorId(id);
+        System.out.println("Datos actuales: " + p);
+        System.out.println("(Deje en blanco para no modificar)");
+        String nombre   = utils.leerTextoOpcional("Nuevo nombre [" + p.getNombre() + "]: ", p.getNombre());
+        String apellido = utils.leerTextoOpcional("Nuevo apellido [" + p.getApellido() + "]: ", p.getApellido());
+        String email    = utils.leerEmailOpcional("Nuevo email [" + p.getEmail() + "]: ", p.getEmail());
         try {
-            Long id = utils.leerLong("ID del paciente a modificar: ");
-            Paciente p = controladorPaciente.buscarPorId(id);
-            System.out.println("Datos actuales: " + p);
-            System.out.println("(Deje en blanco para no modificar)");
-            String nombre   = utils.leerTextoOpcional("Nuevo nombre [" + p.getNombre() + "]: ", p.getNombre());
-            String apellido = utils.leerTextoOpcional("Nuevo apellido [" + p.getApellido() + "]: ", p.getApellido());
-            String email    = utils.leerTextoOpcional("Nuevo email [" + p.getEmail() + "]: ", p.getEmail());
             controladorPaciente.actualizar(id, nombre, apellido, email);
             System.out.println("✓ Paciente actualizado.");
         } catch (Exception e) {
@@ -140,14 +133,15 @@ public class MenuPacientes {
     }
 
     private void eliminar() {
+        listarTodos();
+        Long id = utils.leerIdExistente("ID del paciente a eliminar: ", controladorPaciente::buscarPorId);
+        Paciente p = controladorPaciente.buscarPorId(id);
+        System.out.println("Paciente a eliminar: [" + p.getId() + "] " + p.getNombreCompleto() + " - DNI: " + p.getDni());
+        if (!utils.confirmar("¿Está seguro que desea eliminar este paciente?")) {
+            System.out.println("Operación cancelada.");
+            return;
+        }
         try {
-            Long id = utils.leerLong("ID del paciente a eliminar: ");
-            Paciente p = controladorPaciente.buscarPorId(id);
-            System.out.println("Paciente a eliminar: [" + p.getId() + "] " + p.getNombreCompleto() + " - DNI: " + p.getDni());
-            if (!utils.confirmar("¿Está seguro que desea eliminar este paciente?")) {
-                System.out.println("Operación cancelada.");
-                return;
-            }
             controladorPaciente.eliminar(id);
             System.out.println("✓ Paciente eliminado.");
         } catch (Exception e) {

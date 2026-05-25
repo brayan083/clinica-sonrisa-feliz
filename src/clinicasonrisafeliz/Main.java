@@ -14,6 +14,9 @@ import clinicasonrisafeliz.modelo.Odontologo;
 import clinicasonrisafeliz.modelo.Paciente;
 import clinicasonrisafeliz.modelo.Recepcionista;
 import clinicasonrisafeliz.modelo.Turno;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 import clinicasonrisafeliz.presentacion.consola.ConsolaUtils;
 import clinicasonrisafeliz.presentacion.consola.MenuLogin;
 import clinicasonrisafeliz.presentacion.consola.MenuOdontologos;
@@ -61,13 +64,19 @@ public class Main {
             } catch (Exception e) {
                 System.out.println("⚠ Error al cargar datos: " + e.getMessage());
                 System.out.println("  Se inicia con datos de prueba.");
-                cargarDatosDePrueba(new ControladorPaciente(servicioPaciente, servicioTurno),
-                                    new ControladorOdontologo(servicioOdontologo, servicioTurno));
+                cargarDatosDePrueba(
+                    new ControladorRecepcionista(servicioRecepcionista),
+                    new ControladorPaciente(servicioPaciente, servicioTurno),
+                    new ControladorOdontologo(servicioOdontologo, servicioTurno),
+                    new ControladorTurno(servicioTurno, servicioPaciente, servicioOdontologo));
             }
         } else {
             System.out.println("No se encontraron datos guardados. Cargando datos de prueba...");
-            cargarDatosDePrueba(new ControladorPaciente(servicioPaciente, servicioTurno),
-                                new ControladorOdontologo(servicioOdontologo, servicioTurno));
+            cargarDatosDePrueba(
+                new ControladorRecepcionista(servicioRecepcionista),
+                new ControladorPaciente(servicioPaciente, servicioTurno),
+                new ControladorOdontologo(servicioOdontologo, servicioTurno),
+                new ControladorTurno(servicioTurno, servicioPaciente, servicioOdontologo));
         }
 
         // ── Shutdown hook ─────────────────────────────────────────────────────
@@ -107,15 +116,31 @@ public class Main {
         repoTurno.inicializar(turnos);
     }
 
-    private static void cargarDatosDePrueba(ControladorPaciente controladorPaciente,
-                                            ControladorOdontologo controladorOdontologo) {
-        controladorPaciente.registrar("Juan",   "García",    "juan.garcia@email.com",        "30123456", new Domicilio("Av. Corrientes", "1234", "Buenos Aires", "CABA"));
-        controladorPaciente.registrar("María",  "López",     "maria.lopez@email.com",         "28456789", new Domicilio("Calle Florida",   "567",  "Rosario",       "Santa Fe"));
-        controladorPaciente.registrar("Carlos", "Martínez",  "carlos.martinez@email.com",     "35789012", new Domicilio("Belgrano",         "890",  "Córdoba",       "Córdoba"));
-        controladorPaciente.registrar("Ana",    "Fernández", "ana.fernandez@email.com",        "32345678", new Domicilio("San Martín",       "321",  "Mendoza",       "Mendoza"));
+    private static void cargarDatosDePrueba(ControladorRecepcionista controladorRecepcionista,
+                                            ControladorPaciente controladorPaciente,
+                                            ControladorOdontologo controladorOdontologo,
+                                            ControladorTurno controladorTurno) {
+        // ── Recepcionista ─────────────────────────────────────────────────────
+        Recepcionista recep = controladorRecepcionista.registrar(
+                "Admin", "Sistema", "admin@clinica.com", "REC-001");
 
-        controladorOdontologo.registrar("Laura",   "Rodríguez", "laura.rodriguez@clinica.com", "MAT-1001");
-        controladorOdontologo.registrar("Diego",   "Sánchez",   "diego.sanchez@clinica.com",   "MAT-1002");
-        controladorOdontologo.registrar("Valeria", "Torres",    "valeria.torres@clinica.com",  "MAT-1003");
+        // ── Pacientes ─────────────────────────────────────────────────────────
+        Paciente juan    = controladorPaciente.registrar("Juan",   "García",    "juan.garcia@email.com",    "30123456", new Domicilio("Av. Corrientes", "1234", "Buenos Aires", "CABA"));
+        Paciente maria   = controladorPaciente.registrar("María",  "López",     "maria.lopez@email.com",    "28456789", new Domicilio("Calle Florida",   "567",  "Rosario",      "Santa Fe"));
+        Paciente carlos  = controladorPaciente.registrar("Carlos", "Martínez",  "carlos.martinez@email.com","35789012", new Domicilio("Belgrano",         "890",  "Córdoba",      "Córdoba"));
+                          controladorPaciente.registrar("Ana",    "Fernández", "ana.fernandez@email.com",  "32345678", new Domicilio("San Martín",       "321",  "Mendoza",      "Mendoza"));
+
+        // ── Odontólogos ───────────────────────────────────────────────────────
+        Odontologo laura   = controladorOdontologo.registrar("Laura",   "Rodríguez", "laura.rodriguez@clinica.com", "MAT-1001");
+        Odontologo diego   = controladorOdontologo.registrar("Diego",   "Sánchez",   "diego.sanchez@clinica.com",   "MAT-1002");
+                            controladorOdontologo.registrar("Valeria", "Torres",    "valeria.torres@clinica.com",  "MAT-1003");
+
+        // ── Turnos de muestra (fechas futuras) ────────────────────────────────
+        LocalDate base = LocalDate.now();
+        controladorTurno.reservar(juan.getId(),   laura.getId(), base.plusDays(3),  LocalTime.of(9,  0), recep);
+        controladorTurno.reservar(maria.getId(),  diego.getId(), base.plusDays(5),  LocalTime.of(10, 30), recep);
+        controladorTurno.reservar(carlos.getId(), laura.getId(), base.plusDays(7),  LocalTime.of(14, 0), recep);
+
+        System.out.println("  → Recepcionista de prueba: legajo REC-001");
     }
 }

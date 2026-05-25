@@ -44,6 +44,16 @@ public class ControladorTurno {
         return servicioTurno.buscarPorId(id);
     }
 
+    public Paciente buscarPacientePorId(Long id) {
+        validarId(id, "paciente");
+        return servicioPaciente.buscarPorId(id);
+    }
+
+    public Odontologo buscarOdontologoPorId(Long id) {
+        validarId(id, "odontólogo");
+        return servicioOdontologo.buscarPorId(id);
+    }
+
     public void confirmar(Long turnoId) {
         validarId(turnoId, "turno");
         servicioTurno.confirmar(turnoId);

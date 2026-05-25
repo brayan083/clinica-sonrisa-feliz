@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 public class ConsolaUtils {
 
@@ -28,6 +29,24 @@ public class ConsolaUtils {
         return input.isEmpty() ? valorActual : input;
     }
 
+    public String leerEmail(String prompt) {
+        while (true) {
+            String email = leerTexto(prompt);
+            if (email.contains("@")) return email;
+            System.out.println("  El email debe contener '@'. Intente de nuevo.");
+        }
+    }
+
+    public String leerEmailOpcional(String prompt, String valorActual) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) return valorActual;
+            if (input.contains("@")) return input;
+            System.out.println("  El email debe contener '@'. Intente de nuevo.");
+        }
+    }
+
     public int leerEntero(String prompt) {
         System.out.print(prompt);
         try {
@@ -44,6 +63,18 @@ public class ConsolaUtils {
                 return Long.parseLong(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
                 System.out.println("  Ingrese un número válido.");
+            }
+        }
+    }
+
+    public Long leerIdExistente(String prompt, Consumer<Long> validador) {
+        while (true) {
+            Long id = leerLong(prompt);
+            try {
+                validador.accept(id);
+                return id;
+            } catch (Exception e) {
+                System.out.println("  ✗ " + e.getMessage() + " Intente de nuevo.");
             }
         }
     }
@@ -66,6 +97,14 @@ public class ConsolaUtils {
             } catch (DateTimeParseException e) {
                 System.out.println("  Formato inválido. Use AAAA-MM-DD.");
             }
+        }
+    }
+
+    public LocalDate leerFechaNoPassada(String prompt) {
+        while (true) {
+            LocalDate fecha = leerFecha(prompt);
+            if (!fecha.isBefore(LocalDate.now())) return fecha;
+            System.out.println("  La fecha no puede ser anterior a hoy. Intente de nuevo.");
         }
     }
 
