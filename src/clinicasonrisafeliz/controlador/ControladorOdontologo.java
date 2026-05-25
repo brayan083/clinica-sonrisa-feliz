@@ -1,17 +1,22 @@
 package clinicasonrisafeliz.controlador;
 
 import clinicasonrisafeliz.excepcion.DatoInvalidoException;
+import clinicasonrisafeliz.excepcion.OperacionNoPermitidaException;
 import clinicasonrisafeliz.modelo.Odontologo;
+import clinicasonrisafeliz.modelo.Turno;
 import clinicasonrisafeliz.servicio.ServicioOdontologo;
+import clinicasonrisafeliz.servicio.ServicioTurno;
 
 import java.util.List;
 
 public class ControladorOdontologo {
 
     private final ServicioOdontologo servicioOdontologo;
+    private final ServicioTurno      servicioTurno;
 
-    public ControladorOdontologo(ServicioOdontologo servicioOdontologo) {
+    public ControladorOdontologo(ServicioOdontologo servicioOdontologo, ServicioTurno servicioTurno) {
         this.servicioOdontologo = servicioOdontologo;
+        this.servicioTurno      = servicioTurno;
     }
 
     public Odontologo registrar(String nombre, String apellido, String email, String matricula) {
@@ -46,10 +51,18 @@ public class ControladorOdontologo {
 
     public void eliminar(Long id) {
         validarId(id, "odontólogo");
+        Odontologo odontologo = servicioOdontologo.buscarPorId(id);
+        List<Turno> turnos = servicioTurno.listarPorOdontologo(id);
+        for (Turno t : turnos) {
+            if (t.esFuturo()) {
+                throw new OperacionNoPermitidaException("No se puede eliminar: el odontólogo " +
+                        odontologo.getNombreCompleto() + " tiene turnos futuros asignados.");
+            }
+        }
         servicioOdontologo.eliminar(id);
     }
 
-    // ── Validaciones de formato y nulidad ────────────────────────────────────
+    // ── Validaciones ─────────────────────────────────────────────────────────
 
     private void validarTexto(String valor, String campo) {
         if (valor == null || valor.isBlank()) {

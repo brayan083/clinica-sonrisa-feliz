@@ -15,24 +15,27 @@ public class Turno implements Comparable<Turno> {
     private LocalDate fecha;
     private LocalTime hora;
     private EstadoTurno estado;
+    private Recepcionista recepcionista;
 
-    public Turno(Paciente paciente, Odontologo odontologo, LocalDate fecha, LocalTime hora) {
+    public Turno(Paciente paciente, Odontologo odontologo, LocalDate fecha, LocalTime hora, Recepcionista recepcionista) {
         this.id = contadorId++;
         this.paciente = paciente;
         this.odontologo = odontologo;
         this.fecha = fecha;
         this.hora = hora;
         this.estado = EstadoTurno.PENDIENTE;
+        this.recepcionista = recepcionista;
     }
 
     /** Constructor usado al cargar desde CSV; no incrementa el contador global. */
-    public Turno(long id, Paciente paciente, Odontologo odontologo, LocalDate fecha, LocalTime hora, EstadoTurno estado) {
+    public Turno(long id, Paciente paciente, Odontologo odontologo, LocalDate fecha, LocalTime hora, EstadoTurno estado, Recepcionista recepcionista) {
         this.id = id;
         this.paciente = paciente;
         this.odontologo = odontologo;
         this.fecha = fecha;
         this.hora = hora;
         this.estado = estado;
+        this.recepcionista = recepcionista;
     }
 
     public static void resetContador(long nextId) {
@@ -62,6 +65,7 @@ public class Turno implements Comparable<Turno> {
     public void setHora(LocalTime hora) { this.hora = hora; }
     public EstadoTurno getEstado() { return estado; }
     public void setEstado(EstadoTurno estado) { this.estado = estado; }
+    public Recepcionista getRecepcionista() { return recepcionista; }
 
     @Override
     public String toString() {
@@ -71,6 +75,7 @@ public class Turno implements Comparable<Turno> {
                 ", estado=" + estado +
                 ", paciente=" + paciente.getNombreCompleto() +
                 ", odontologo=" + odontologo.getNombreCompleto() +
+                ", recepcionista=" + recepcionista.getNombreCompleto() +
                 '}';
     }
 }

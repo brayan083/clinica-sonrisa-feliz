@@ -2,6 +2,7 @@ package clinicasonrisafeliz.presentacion.consola;
 
 import clinicasonrisafeliz.controlador.ControladorTurno;
 import clinicasonrisafeliz.enums.EstadoTurno;
+import clinicasonrisafeliz.modelo.Recepcionista;
 import clinicasonrisafeliz.modelo.Turno;
 
 import java.time.LocalDate;
@@ -14,15 +15,18 @@ public class MenuTurnos {
     private final MenuPacientes    menuPacientes;
     private final MenuOdontologos  menuOdontologos;
     private final ConsolaUtils     utils;
+    private final Recepcionista    operador;
 
     public MenuTurnos(ControladorTurno controladorTurno,
                       MenuPacientes menuPacientes,
                       MenuOdontologos menuOdontologos,
-                      ConsolaUtils utils) {
+                      ConsolaUtils utils,
+                      Recepcionista operador) {
         this.controladorTurno = controladorTurno;
         this.menuPacientes    = menuPacientes;
         this.menuOdontologos  = menuOdontologos;
         this.utils            = utils;
+        this.operador         = operador;
     }
 
     public void mostrar() {
@@ -77,7 +81,7 @@ public class MenuTurnos {
             Long odontologoId = utils.leerLong("ID del odontólogo: ");
             LocalDate fecha = utils.leerFecha("Fecha (AAAA-MM-DD): ");
             LocalTime hora  = utils.leerHora("Hora (HH:MM): ");
-            Turno turno = controladorTurno.reservar(pacienteId, odontologoId, fecha, hora);
+            Turno turno = controladorTurno.reservar(pacienteId, odontologoId, fecha, hora, operador);
             System.out.println("✓ Turno reservado con ID " + turno.getId() + ": " + turno);
         } catch (Exception e) {
             System.out.println("✗ " + e.getMessage());

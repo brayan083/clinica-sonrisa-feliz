@@ -2,7 +2,12 @@ package clinicasonrisafeliz.controlador;
 
 import clinicasonrisafeliz.enums.EstadoTurno;
 import clinicasonrisafeliz.excepcion.DatoInvalidoException;
+import clinicasonrisafeliz.modelo.Odontologo;
+import clinicasonrisafeliz.modelo.Paciente;
+import clinicasonrisafeliz.modelo.Recepcionista;
 import clinicasonrisafeliz.modelo.Turno;
+import clinicasonrisafeliz.servicio.ServicioOdontologo;
+import clinicasonrisafeliz.servicio.ServicioPaciente;
 import clinicasonrisafeliz.servicio.ServicioTurno;
 
 import java.time.LocalDate;
@@ -11,18 +16,27 @@ import java.util.List;
 
 public class ControladorTurno {
 
-    private final ServicioTurno servicioTurno;
+    private final ServicioTurno      servicioTurno;
+    private final ServicioPaciente   servicioPaciente;
+    private final ServicioOdontologo servicioOdontologo;
 
-    public ControladorTurno(ServicioTurno servicioTurno) {
-        this.servicioTurno = servicioTurno;
+    public ControladorTurno(ServicioTurno servicioTurno,
+                            ServicioPaciente servicioPaciente,
+                            ServicioOdontologo servicioOdontologo) {
+        this.servicioTurno      = servicioTurno;
+        this.servicioPaciente   = servicioPaciente;
+        this.servicioOdontologo = servicioOdontologo;
     }
 
-    public Turno reservar(Long pacienteId, Long odontologoId, LocalDate fecha, LocalTime hora) {
+    public Turno reservar(Long pacienteId, Long odontologoId, LocalDate fecha, LocalTime hora, Recepcionista recepcionista) {
         validarId(pacienteId, "paciente");
         validarId(odontologoId, "odontólogo");
-        if (fecha == null) throw new DatoInvalidoException("La fecha del turno no puede ser nula.");
-        if (hora  == null) throw new DatoInvalidoException("La hora del turno no puede ser nula.");
-        return servicioTurno.reservar(pacienteId, odontologoId, fecha, hora);
+        if (fecha == null)          throw new DatoInvalidoException("La fecha del turno no puede ser nula.");
+        if (hora  == null)          throw new DatoInvalidoException("La hora del turno no puede ser nula.");
+        if (recepcionista == null)  throw new DatoInvalidoException("El recepcionista no puede ser nulo.");
+        Paciente   paciente   = servicioPaciente.buscarPorId(pacienteId);
+        Odontologo odontologo = servicioOdontologo.buscarPorId(odontologoId);
+        return servicioTurno.reservar(paciente, odontologo, fecha, hora, recepcionista);
     }
 
     public Turno buscarPorId(Long id) {
@@ -58,11 +72,13 @@ public class ControladorTurno {
 
     public List<Turno> listarPorPaciente(Long pacienteId) {
         validarId(pacienteId, "paciente");
+        servicioPaciente.buscarPorId(pacienteId); // valida existencia
         return servicioTurno.listarPorPaciente(pacienteId);
     }
 
     public List<Turno> listarPorOdontologo(Long odontologoId) {
         validarId(odontologoId, "odontólogo");
+        servicioOdontologo.buscarPorId(odontologoId); // valida existencia
         return servicioTurno.listarPorOdontologo(odontologoId);
     }
 
@@ -82,7 +98,7 @@ public class ControladorTurno {
         return servicioTurno.listarPorRangoDeFechas(desde, hasta);
     }
 
-    // ── Validaciones de formato y nulidad ────────────────────────────────────
+    // ── Validaciones ─────────────────────────────────────────────────────────
 
     private void validarId(Long id, String entidad) {
         if (id == null || id <= 0) {

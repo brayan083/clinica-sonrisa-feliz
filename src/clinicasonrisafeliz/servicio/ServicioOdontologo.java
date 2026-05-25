@@ -6,20 +6,15 @@ import java.util.stream.Collectors;
 
 import clinicasonrisafeliz.excepcion.MatriculaDuplicadaException;
 import clinicasonrisafeliz.excepcion.OdontologoNoEncontradoException;
-import clinicasonrisafeliz.excepcion.OperacionNoPermitidaException;
 import clinicasonrisafeliz.modelo.Odontologo;
-import clinicasonrisafeliz.modelo.Turno;
 import clinicasonrisafeliz.repositorio.RepositorioOdontologo;
-import clinicasonrisafeliz.repositorio.RepositorioTurno;
 
 public class ServicioOdontologo {
 
     private final RepositorioOdontologo repositorioOdontologo;
-    private final RepositorioTurno      repositorioTurno;
 
-    public ServicioOdontologo(RepositorioOdontologo repositorioOdontologo, RepositorioTurno repositorioTurno) {
+    public ServicioOdontologo(RepositorioOdontologo repositorioOdontologo) {
         this.repositorioOdontologo = repositorioOdontologo;
-        this.repositorioTurno      = repositorioTurno;
     }
 
     public Odontologo registrar(String nombre, String apellido, String email, String matricula) {
@@ -47,10 +42,6 @@ public class ServicioOdontologo {
         return odontologo;
     }
 
-    /**
-     * Lista todos los odontólogos ordenados alfabéticamente.
-     * Usa Stream API: sorted(Comparator) + collect, mostrando orden con Comparator externo.
-     */
     public List<Odontologo> listarTodos() {
         return repositorioOdontologo.buscarTodos()
                 .stream()
@@ -59,10 +50,6 @@ public class ServicioOdontologo {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Actualiza los datos personales de un odontólogo a partir de sus campos individuales.
-     * La mutación del objeto de dominio ocurre aquí, en la capa de servicio.
-     */
     public void actualizar(Long id, String nombre, String apellido, String email) {
         Odontologo odontologo = buscarPorId(id);
         odontologo.setNombre(nombre);
@@ -72,14 +59,7 @@ public class ServicioOdontologo {
     }
 
     public void eliminar(Long id) {
-        Odontologo odontologo = buscarPorId(id);
-        List<Turno> turnosOdontologo = repositorioTurno.buscarPorOdontologoId(id);
-        for (Turno t : turnosOdontologo) {
-            if (t.esFuturo()) {
-                throw new OperacionNoPermitidaException("No se puede eliminar: el odontólogo " +
-                        odontologo.getNombreCompleto() + " tiene turnos futuros asignados.");
-            }
-        }
+        buscarPorId(id);
         repositorioOdontologo.eliminar(id);
     }
 }
