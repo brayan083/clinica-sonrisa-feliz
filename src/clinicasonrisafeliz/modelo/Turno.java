@@ -39,10 +39,6 @@ public class Turno implements Comparable<Turno> {
         this.recepcionista = recepcionista;
     }
 
-    public static void resetContador(long nextId) {
-        contadorId = nextId;
-    }
-
     @Override
     public int compareTo(Turno otro) {
         int cmp = this.fecha.compareTo(otro.fecha);
