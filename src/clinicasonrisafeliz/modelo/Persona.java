@@ -15,17 +15,26 @@ public abstract class Persona {
         this.email = email;
     }
 
-    /** Constructor usado al cargar desde CSV; no incrementa el contador global. */
+    /** Constructor usado al cargar desde CSV; ajusta el contador para evitar colisiones. */
     protected Persona(long id, String nombre, String apellido, String email) {
         this.id = id;
+        if (id >= contadorId) contadorId = id + 1;
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
     }
 
-    public static void resetContador(long nextId) {
-        contadorId = nextId;
-    }
+    /**
+     * Devuelve el nombre del rol de esta persona en la clínica.
+     * Cada subclase lo implementa con su propio valor.
+     */
+    public abstract String getRol();
+
+    /**
+     * Devuelve el identificador único del rol (DNI, matrícula o legajo).
+     * Cada subclase lo implementa con su campo específico.
+     */
+    public abstract String getIdentificador();
 
     public String getNombreCompleto() {
         return this.nombre + " " + this.apellido;
@@ -44,6 +53,6 @@ public abstract class Persona {
 
     @Override
     public String toString() {
-        return "ID: " + id + " | Nombre: " + getNombreCompleto() + " | Email: " + email;
+        return getRol() + " | " + getNombreCompleto() + " | " + getIdentificador() + " | Email: " + email;
     }
 }

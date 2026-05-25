@@ -27,9 +27,10 @@ public class Turno implements Comparable<Turno> {
         this.recepcionista = recepcionista;
     }
 
-    /** Constructor usado al cargar desde CSV; no incrementa el contador global. */
+    /** Constructor usado al cargar desde CSV; ajusta el contador para evitar colisiones. */
     public Turno(long id, Paciente paciente, Odontologo odontologo, LocalDate fecha, LocalTime hora, EstadoTurno estado, Recepcionista recepcionista) {
         this.id = id;
+        if (id >= contadorId) contadorId = id + 1;
         this.paciente = paciente;
         this.odontologo = odontologo;
         this.fecha = fecha;

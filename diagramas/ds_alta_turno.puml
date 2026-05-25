@@ -1,0 +1,75 @@
+@startuml
+title Alta de un nuevo turno
+
+actor Usuario
+participant MenuTurnos
+participant ControladorTurno
+participant ServicioPaciente
+participant ServicioOdontologo
+participant ServicioTurno
+participant RepositorioPaciente
+participant RepositorioOdontologo
+participant RepositorioTurno
+
+Usuario -> MenuTurnos: selecciona "Reservar turno"
+
+loop hasta ID válido
+  Usuario -> MenuTurnos: ingresa ID paciente
+  MenuTurnos -> ControladorTurno: buscarPacientePorId(id)
+  ControladorTurno -> ServicioPaciente: buscarPorId(id)
+  ServicioPaciente -> RepositorioPaciente: buscarPorId(id)
+  RepositorioPaciente --> ServicioPaciente: Paciente | null
+  alt no encontrado
+    ServicioPaciente --> MenuTurnos: throws PacienteNoEncontradoException
+    MenuTurnos -> Usuario: "✗ No se encontró paciente. Intente de nuevo."
+  else encontrado
+    ServicioPaciente --> MenuTurnos: ok
+  end
+end
+
+loop hasta ID válido
+  Usuario -> MenuTurnos: ingresa ID odontólogo
+  MenuTurnos -> ControladorTurno: buscarOdontologoPorId(id)
+  ControladorTurno -> ServicioOdontologo: buscarPorId(id)
+  ServicioOdontologo -> RepositorioOdontologo: buscarPorId(id)
+  RepositorioOdontologo --> ServicioOdontologo: Odontologo | null
+  alt no encontrado
+    ServicioOdontologo --> MenuTurnos: throws OdontologoNoEncontradoException
+    MenuTurnos -> Usuario: "✗ No se encontró odontólogo. Intente de nuevo."
+  else encontrado
+    ServicioOdontologo --> MenuTurnos: ok
+  end
+end
+
+loop hasta fecha válida
+  Usuario -> MenuTurnos: ingresa fecha
+  alt fecha en el pasado
+    MenuTurnos -> Usuario: "La fecha no puede ser anterior a hoy."
+  else fecha válida
+    MenuTurnos -> MenuTurnos: continúa
+  end
+end
+
+Usuario -> MenuTurnos: ingresa hora
+
+MenuTurnos -> ControladorTurno: reservar(pacienteId, odontologoId, fecha, hora, recepcionista)
+ControladorTurno -> ServicioPaciente: buscarPorId(pacienteId)
+ServicioPaciente --> ControladorTurno: Paciente
+ControladorTurno -> ServicioOdontologo: buscarPorId(odontologoId)
+ServicioOdontologo --> ControladorTurno: Odontologo
+ControladorTurno -> ServicioTurno: reservar(paciente, odontologo, fecha, hora, recepcionista)
+
+alt turno ya reservado
+  ServicioTurno --> ControladorTurno: throws TurnoYaReservadoException
+  ControladorTurno --> MenuTurnos: throws exception
+  MenuTurnos -> Usuario: "✗ El odontólogo no está disponible en ese horario."
+else turno disponible
+  ServicioTurno -> ServicioTurno: new Turno(...)
+  ServicioTurno -> RepositorioTurno: guardar(turno)
+  RepositorioTurno --> ServicioTurno: ok
+  ServicioTurno --> ControladorTurno: Turno
+  ControladorTurno --> MenuTurnos: Turno
+  MenuTurnos -> Usuario: "✓ Turno reservado con ID X"
+end
+
+@enduml

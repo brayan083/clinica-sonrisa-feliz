@@ -18,17 +18,14 @@ public class Domicilio {
         this.provincia = provincia;
     }
 
-    /** Constructor usado al cargar desde CSV; no incrementa el contador global. */
+    /** Constructor usado al cargar desde CSV; ajusta el contador para evitar colisiones. */
     public Domicilio(long id, String calle, String numero, String localidad, String provincia) {
         this.id        = id;
+        if (id >= contadorId) contadorId = id + 1;
         this.calle     = calle;
         this.numero    = numero;
         this.localidad = localidad;
         this.provincia = provincia;
-    }
-
-    public static void resetContador(long nextId) {
-        contadorId = nextId;
     }
 
     public Long getId() { return id; }

@@ -15,6 +15,12 @@ public class Recepcionista extends Persona {
         this.legajo = legajo;
     }
 
+    @Override
+    public String getRol() { return "Recepcionista"; }
+
+    @Override
+    public String getIdentificador() { return "Legajo: " + legajo; }
+
     public String getLegajo() { return legajo; }
     public void setLegajo(String legajo) { this.legajo = legajo; }
 

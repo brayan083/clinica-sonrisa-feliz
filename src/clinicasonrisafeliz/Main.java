@@ -110,7 +110,6 @@ public class Main {
         List<Paciente>   pacientes   = PersistenciaCSV.cargarPacientes();
         List<Odontologo> odontologos = PersistenciaCSV.cargarOdontologos();
         List<Turno>      turnos      = PersistenciaCSV.cargarTurnos(pacientes, odontologos, recepcionistas);
-        PersistenciaCSV.resetContadores(pacientes, odontologos, turnos);
         repoPaciente.inicializar(pacientes);
         repoOdontologo.inicializar(odontologos);
         repoTurno.inicializar(turnos);

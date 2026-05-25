@@ -36,7 +36,6 @@ public class ServicioTurno {
         }
         Turno turno = new Turno(paciente, odontologo, fecha, hora, recepcionista);
         odontologo.getAgenda().agregarTurno(turno);
-        paciente.agregarTurno(turno);
         repositorioTurno.guardar(turno);
         return turno;
     }

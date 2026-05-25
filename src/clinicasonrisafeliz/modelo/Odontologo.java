@@ -19,6 +19,12 @@ public class Odontologo extends Persona{
         this.agenda = new Agenda();
     }
 
+    @Override
+    public String getRol() { return "Odontólogo"; }
+
+    @Override
+    public String getIdentificador() { return "Matrícula: " + matricula; }
+
     public String getMatricula() { return matricula; }
     public void setMatricula(String matricula) { this.matricula = matricula; }
     public Agenda getAgenda() { return agenda; }

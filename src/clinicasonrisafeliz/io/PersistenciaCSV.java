@@ -192,7 +192,6 @@ public class PersistenciaCSV {
                 Recepcionista recep    = mapaRecepcionistas.get(c[6]);
                 if (recep == null) continue;
                 Turno t = new Turno(id, paciente, odon, fecha, hora, estado, recep);
-                paciente.agregarTurno(t);
                 odon.getAgenda().agregarTurno(t);
                 lista.add(t);
             }
@@ -218,36 +217,4 @@ public class PersistenciaCSV {
         return lista;
     }
 
-    // ─── RESET DE CONTADORES ─────────────────────────────────────────────────
-
-    /**
-     * Restablece los contadores estáticos de ID para que nuevas entidades
-     * no colisionen con las cargadas desde CSV.
-     */
-    public static void resetContadores(List<Paciente> pacientes,
-                                        List<Odontologo> odontologos,
-                                        List<Turno> turnos) {
-        long maxPersona = 0;
-        for (Paciente p : pacientes) {
-            if (p.getId() > maxPersona) maxPersona = p.getId();
-        }
-        for (Odontologo o : odontologos) {
-            if (o.getId() > maxPersona) maxPersona = o.getId();
-        }
-        Persona.resetContador(maxPersona + 1);
-
-        long maxDomicilio = 0;
-        for (Paciente p : pacientes) {
-            if (p.getDomicilio() != null && p.getDomicilio().getId() > maxDomicilio) {
-                maxDomicilio = p.getDomicilio().getId();
-            }
-        }
-        Domicilio.resetContador(maxDomicilio + 1);
-
-        long maxTurno = 0;
-        for (Turno t : turnos) {
-            if (t.getId() > maxTurno) maxTurno = t.getId();
-        }
-        Turno.resetContador(maxTurno + 1);
-    }
 }
