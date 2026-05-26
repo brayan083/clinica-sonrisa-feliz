@@ -50,6 +50,7 @@ public class MenuLogin {
 
     private Recepcionista login() {
         System.out.println("\n--- Iniciar Sesión ---");
+        System.out.println("Ingrese su número de legajo de recepcionista.");
         String legajo = utils.leerTexto("Legajo: ");
         Recepcionista r = controlador.buscarPorLegajo(legajo);
         if (r == null) {
