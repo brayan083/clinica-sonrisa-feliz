@@ -17,12 +17,9 @@ import clinicasonrisafeliz.modelo.Turno;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import clinicasonrisafeliz.presentacion.consola.ConsolaUtils;
-import clinicasonrisafeliz.presentacion.consola.MenuLogin;
-import clinicasonrisafeliz.presentacion.consola.MenuOdontologos;
-import clinicasonrisafeliz.presentacion.consola.MenuPacientes;
-import clinicasonrisafeliz.presentacion.consola.MenuPrincipal;
-import clinicasonrisafeliz.presentacion.consola.MenuTurnos;
+import clinicasonrisafeliz.presentacion.gui.VentanaLogin;
+import clinicasonrisafeliz.presentacion.gui.VentanaPrincipal;
+import javax.swing.SwingUtilities;
 import clinicasonrisafeliz.repositorio.RepositorioOdontologo;
 import clinicasonrisafeliz.repositorio.RepositorioPaciente;
 import clinicasonrisafeliz.repositorio.RepositorioRecepcionista;
@@ -92,17 +89,25 @@ public class Main {
         ControladorTurno         controladorTurno         = new ControladorTurno(servicioTurno, servicioPaciente, servicioOdontologo);
         ControladorRecepcionista controladorRecepcionista = new ControladorRecepcionista(servicioRecepcionista);
 
-        // ── Presentación ──────────────────────────────────────────────────────
-        ConsolaUtils    utils           = new ConsolaUtils(new Scanner(System.in));
-        MenuLogin       menuLogin       = new MenuLogin(controladorRecepcionista, utils);
-        Recepcionista   operador        = menuLogin.iniciar();
+        // ── Presentación GUI (Swing) ──────────────────────────────────────────
+        SwingUtilities.invokeLater(() -> {
+            VentanaLogin login = new VentanaLogin(null, controladorRecepcionista);
+            login.setVisible(true);
 
-        MenuPacientes   menuPacientes   = new MenuPacientes(controladorPaciente, utils);
-        MenuOdontologos menuOdontologos = new MenuOdontologos(controladorOdontologo, utils);
-        MenuTurnos      menuTurnos      = new MenuTurnos(controladorTurno, menuPacientes, menuOdontologos, utils, operador);
-        MenuPrincipal   menu            = new MenuPrincipal(menuPacientes, menuOdontologos, menuTurnos, operador);
-
-        menu.iniciar();
+            Recepcionista operador = login.getRecepcionistaAutenticado();
+            if (operador != null) {
+                VentanaPrincipal ventana = new VentanaPrincipal(
+                        controladorPaciente,
+                        controladorOdontologo,
+                        controladorTurno,
+                        operador
+                );
+                ventana.setVisible(true);
+            } else {
+                System.out.println("Inicio de sesión cancelado o fallido. Cerrando aplicación.");
+                System.exit(0);
+            }
+        });
     }
 
     private static void cargarDesdeCSV(RepositorioPaciente repoPaciente, RepositorioOdontologo repoOdontologo,
