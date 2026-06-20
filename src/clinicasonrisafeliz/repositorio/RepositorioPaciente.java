@@ -46,33 +46,23 @@ public class RepositorioPaciente implements IRepositorio<Paciente> {
 
     // ── Búsquedas ────────────────────────────────────────────────────────────
 
-    /** Busca un paciente por DNI exacto usando Iterator. Devuelve null si no existe. */
+    /** Busca un paciente por DNI exacto usando Stream. Devuelve null si no existe. */
     public Paciente buscarPorDni(String dni) {
-        Iterator<Paciente> iter = almacenamiento.values().iterator();
-        while (iter.hasNext()) {
-            Paciente p = iter.next();
-            if (p.getDni().equals(dni)) {
-                return p;
-            }
-        }
-        return null;
+        return almacenamiento.values().stream()
+                .filter(p -> p.getDni().equals(dni))
+                .findFirst()
+                .orElse(null);
     }
 
     public boolean existeDni(String dni) {
         return buscarPorDni(dni) != null;
     }
 
-    /** Búsqueda parcial por apellido usando Iterator explícito. */
+    /** Búsqueda parcial por apellido usando Stream API. */
     public List<Paciente> buscarPorApellido(String apellido) {
-        List<Paciente> resultado = new ArrayList<>();
-        Iterator<Paciente> iter = almacenamiento.values().iterator();
-        while (iter.hasNext()) {
-            Paciente p = iter.next();
-            if (p.getApellido().toLowerCase().contains(apellido.toLowerCase())) {
-                resultado.add(p);
-            }
-        }
-        return resultado;
+        return almacenamiento.values().stream()
+                .filter(p -> p.getApellido().toLowerCase().contains(apellido.toLowerCase()))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     // ── Carga inicial (sin persistir, evita escrituras innecesarias al arrancar) ──

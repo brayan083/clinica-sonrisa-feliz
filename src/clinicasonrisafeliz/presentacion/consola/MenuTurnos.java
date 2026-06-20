@@ -58,7 +58,7 @@ public class MenuTurnos {
                 case 9  -> listarPorFecha();
                 case 10 -> listarPorRangoDeFechas();
                 case 11 -> listarPorEstado();
-                case 0  -> {}
+                case 0  -> System.out.println("Volviendo al menú anterior...");
                 default -> System.out.println("Opción inválida.");
             }
         }

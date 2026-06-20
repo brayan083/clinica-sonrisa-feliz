@@ -34,7 +34,7 @@ public class MenuOdontologos {
                 case 4 -> listarTodos();
                 case 5 -> modificar();
                 case 6 -> eliminar();
-                case 0 -> {}
+                case 0 -> System.out.println("Volviendo al menú anterior...");
                 default -> System.out.println("Opción inválida.");
             }
         }

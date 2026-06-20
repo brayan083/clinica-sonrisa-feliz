@@ -61,53 +61,33 @@ public class RepositorioTurno implements IRepositorio<Turno> {
     }
 
     public List<Turno> buscarPorPacienteId(Long pacienteId) {
-        List<Turno> resultado = new ArrayList<>();
-        for (Turno t : almacenamiento) {
-            if (t.getPaciente().getId().equals(pacienteId)) {
-                resultado.add(t);
-            }
-        }
-        return resultado;
+        return almacenamiento.stream()
+                .filter(t -> t.getPaciente().getId().equals(pacienteId))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     public List<Turno> buscarPorOdontologoId(Long odontologoId) {
-        List<Turno> resultado = new ArrayList<>();
-        for (Turno t : almacenamiento) {
-            if (t.getOdontologo().getId().equals(odontologoId)) {
-                resultado.add(t);
-            }
-        }
-        return resultado;
+        return almacenamiento.stream()
+                .filter(t -> t.getOdontologo().getId().equals(odontologoId))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     public List<Turno> buscarPorFecha(LocalDate fecha) {
-        List<Turno> resultado = new ArrayList<>();
-        for (Turno t : almacenamiento) {
-            if (t.getFecha().equals(fecha)) {
-                resultado.add(t);
-            }
-        }
-        return resultado;
+        return almacenamiento.stream()
+                .filter(t -> t.getFecha().equals(fecha))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     public List<Turno> buscarPorEstado(EstadoTurno estado) {
-        List<Turno> resultado = new ArrayList<>();
-        for (Turno t : almacenamiento) {
-            if (t.getEstado() == estado) {
-                resultado.add(t);
-            }
-        }
-        return resultado;
+        return almacenamiento.stream()
+                .filter(t -> t.getEstado() == estado)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     public List<Turno> buscarPorRangoDeFechas(LocalDate desde, LocalDate hasta) {
-        List<Turno> resultado = new ArrayList<>();
-        for (Turno t : almacenamiento) {
-            if (!t.getFecha().isBefore(desde) && !t.getFecha().isAfter(hasta)) {
-                resultado.add(t);
-            }
-        }
-        return resultado;
+        return almacenamiento.stream()
+                .filter(t -> !t.getFecha().isBefore(desde) && !t.getFecha().isAfter(hasta))
+                .collect(java.util.stream.Collectors.toList());
     }
 
     // ── Carga inicial (sin persistir, evita escrituras innecesarias al arrancar) ──

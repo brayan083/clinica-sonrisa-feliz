@@ -45,14 +45,12 @@ public class RepositorioOdontologo implements IRepositorio<Odontologo> {
 
     // ── Búsquedas ────────────────────────────────────────────────────────────
 
-    /** Busca un odontólogo por matrícula exacta con for-each. Devuelve null si no existe. */
+    /** Busca un odontólogo por matrícula exacta con Stream API. Devuelve null si no existe. */
     public Odontologo buscarPorMatricula(String matricula) {
-        for (Odontologo o : almacenamiento.values()) {
-            if (o.getMatricula().equals(matricula)) {
-                return o;
-            }
-        }
-        return null;
+        return almacenamiento.values().stream()
+                .filter(o -> o.getMatricula().equals(matricula))
+                .findFirst()
+                .orElse(null);
     }
 
     public boolean existeMatricula(String matricula) {

@@ -39,7 +39,7 @@ public class MenuPacientes {
                 case 6 -> listarNombresCompletos();
                 case 7 -> modificar();
                 case 8 -> eliminar();
-                case 0 -> {}
+                case 0 -> System.out.println("Volviendo al menú anterior...");
                 default -> System.out.println("Opción inválida.");
             }
         }
