@@ -47,32 +47,32 @@ public class VentanaPrincipal extends JFrame {
     private void initComponents() {
         setLayout(new BorderLayout());
 
-        // Menú Lateral (Sidebar)
-        JPanel sidebar = new JPanel(new BorderLayout());
-        sidebar.setBorder(BorderFactory.createEmptyBorder(25, 20, 25, 20));
-        sidebar.setBackground(new Color(53, 79, 82)); // Charcoal
+        // Barra de Navegación Superior (Navbar)
+        JPanel navbar = new JPanel(new BorderLayout());
+        navbar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        navbar.setBackground(new Color(53, 79, 82)); // Charcoal
 
-        JPanel panelBotonesArriba = new JPanel(new GridLayout(5, 1, 15, 15));
-        panelBotonesArriba.setBackground(new Color(53, 79, 82));
+        JPanel panelBotonesIzq = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        panelBotonesIzq.setBackground(new Color(53, 79, 82));
 
-        JLabel lblUser = new JLabel("<html><div style='text-align: center; color: white;'>Bienvenido/a<br><b>" 
-                                    + operador.getNombreCompleto() + "</b></div></html>");
-        lblUser.setHorizontalAlignment(SwingConstants.CENTER);
-        panelBotonesArriba.add(lblUser);
+        JLabel lblUser = new JLabel("<html><div style='color: white;'><b>Sonrisa Feliz</b> | " 
+                                    + operador.getNombreCompleto() + "</div></html>");
+        lblUser.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20)); // Margen derecho
+        panelBotonesIzq.add(lblUser);
 
-        JButton btnPacientes = crearBotonSidebar("Gestión Pacientes");
-        JButton btnOdontologos = crearBotonSidebar("Gestión Odontólogos");
-        JButton btnTurnos = crearBotonSidebar("Gestión Turnos");
-        JButton btnBusquedas = crearBotonSidebar("Búsquedas");
+        JButton btnPacientes = crearBotonSidebar("👥 Pacientes");
+        JButton btnOdontologos = crearBotonSidebar("⚕️ Odontólogos");
+        JButton btnTurnos = crearBotonSidebar("📅 Turnos");
+        JButton btnBusquedas = crearBotonSidebar("🔍 Búsquedas");
 
-        panelBotonesArriba.add(btnPacientes);
-        panelBotonesArriba.add(btnOdontologos);
-        panelBotonesArriba.add(btnTurnos);
-        panelBotonesArriba.add(btnBusquedas);
+        panelBotonesIzq.add(btnPacientes);
+        panelBotonesIzq.add(btnOdontologos);
+        panelBotonesIzq.add(btnTurnos);
+        panelBotonesIzq.add(btnBusquedas);
 
-        sidebar.add(panelBotonesArriba, BorderLayout.NORTH);
+        navbar.add(panelBotonesIzq, BorderLayout.WEST);
 
-        JButton btnSalir = crearBotonSidebar("Salir del Sistema");
+        JButton btnSalir = crearBotonSidebar("❌ Salir");
         btnSalir.setBackground(new Color(169, 46, 34)); // Rojo oscuro para salir
         btnSalir.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -84,9 +84,9 @@ public class VentanaPrincipal extends JFrame {
                 btnSalir.setBackground(new Color(169, 46, 34));
             }
         });
-        sidebar.add(btnSalir, BorderLayout.SOUTH);
+        navbar.add(btnSalir, BorderLayout.EAST);
 
-        add(sidebar, BorderLayout.WEST);
+        add(navbar, BorderLayout.NORTH);
 
         // Panel Central con CardLayout
         cardLayout = new CardLayout();
