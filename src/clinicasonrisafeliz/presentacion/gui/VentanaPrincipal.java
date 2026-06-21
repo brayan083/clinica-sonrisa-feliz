@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 public class VentanaPrincipal extends JFrame {
@@ -46,26 +48,43 @@ public class VentanaPrincipal extends JFrame {
         setLayout(new BorderLayout());
 
         // Menú Lateral (Sidebar)
-        JPanel sidebar = new JPanel(new GridLayout(6, 1, 10, 10));
-        sidebar.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        sidebar.setBackground(new Color(44, 62, 80));
+        JPanel sidebar = new JPanel(new BorderLayout());
+        sidebar.setBorder(BorderFactory.createEmptyBorder(25, 20, 25, 20));
+        sidebar.setBackground(new Color(53, 79, 82)); // Charcoal
+
+        JPanel panelBotonesArriba = new JPanel(new GridLayout(5, 1, 15, 15));
+        panelBotonesArriba.setBackground(new Color(53, 79, 82));
 
         JLabel lblUser = new JLabel("<html><div style='text-align: center; color: white;'>Bienvenido/a<br><b>" 
                                     + operador.getNombreCompleto() + "</b></div></html>");
         lblUser.setHorizontalAlignment(SwingConstants.CENTER);
-        sidebar.add(lblUser);
+        panelBotonesArriba.add(lblUser);
 
         JButton btnPacientes = crearBotonSidebar("Gestión Pacientes");
         JButton btnOdontologos = crearBotonSidebar("Gestión Odontólogos");
         JButton btnTurnos = crearBotonSidebar("Gestión Turnos");
         JButton btnBusquedas = crearBotonSidebar("Búsquedas");
-        JButton btnSalir = crearBotonSidebar("Salir del Sistema");
 
-        sidebar.add(btnPacientes);
-        sidebar.add(btnOdontologos);
-        sidebar.add(btnTurnos);
-        sidebar.add(btnBusquedas);
-        sidebar.add(btnSalir);
+        panelBotonesArriba.add(btnPacientes);
+        panelBotonesArriba.add(btnOdontologos);
+        panelBotonesArriba.add(btnTurnos);
+        panelBotonesArriba.add(btnBusquedas);
+
+        sidebar.add(panelBotonesArriba, BorderLayout.NORTH);
+
+        JButton btnSalir = crearBotonSidebar("Salir del Sistema");
+        btnSalir.setBackground(new Color(169, 46, 34)); // Rojo oscuro para salir
+        btnSalir.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btnSalir.setBackground(new Color(200, 60, 45)); // Hover rojo
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btnSalir.setBackground(new Color(169, 46, 34));
+            }
+        });
+        sidebar.add(btnSalir, BorderLayout.SOUTH);
 
         add(sidebar, BorderLayout.WEST);
 
@@ -107,10 +126,24 @@ public class VentanaPrincipal extends JFrame {
 
     private JButton crearBotonSidebar(String texto) {
         JButton btn = new JButton(texto);
-        btn.setFont(new Font("Arial", Font.BOLD, 14));
+        btn.setFont(new Font("Roboto", Font.BOLD, 14));
         btn.setForeground(Color.WHITE);
-        btn.setBackground(new Color(52, 73, 94));
+        btn.setBackground(new Color(82, 121, 111)); // Sage Green
         btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btn.setBackground(new Color(132, 169, 140)); // Light Sage Hover
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn.setBackground(new Color(82, 121, 111)); // Back to Sage Green
+            }
+        });
+
         return btn;
     }
 

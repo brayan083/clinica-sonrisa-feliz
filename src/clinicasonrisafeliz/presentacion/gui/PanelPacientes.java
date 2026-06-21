@@ -52,7 +52,7 @@ public class PanelPacientes extends JPanel {
                 BorderFactory.createEtchedBorder(), "Datos del Paciente", TitledBorder.LEFT, TitledBorder.TOP));
         
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(10, 15, 10, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         txtId = new JTextField(); txtId.setEditable(false);
@@ -80,10 +80,19 @@ public class PanelPacientes extends JPanel {
         agregarCampo(panelFormulario, gbc, "Provincia:", txtProvincia, 2, row++);
 
         // Botones
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
         btnGuardar = new JButton("Guardar / Actualizar");
+        btnGuardar.setBackground(new Color(82, 121, 111));
+        btnGuardar.setForeground(Color.WHITE);
+        btnGuardar.setFocusPainted(false);
+
         btnEliminar = new JButton("Eliminar");
-        btnLimpiar = new JButton("Limpiar");
+        btnEliminar.setBackground(new Color(217, 83, 79)); // Rojo
+        btnEliminar.setForeground(Color.WHITE);
+        btnEliminar.setFocusPainted(false);
+
+        btnLimpiar = new JButton("Limpiar / Nuevo");
+        btnLimpiar.setFocusPainted(false);
 
         btnGuardar.addActionListener(e -> guardarPaciente());
         btnEliminar.addActionListener(e -> eliminarPaciente());
@@ -101,7 +110,9 @@ public class PanelPacientes extends JPanel {
 
     private void agregarCampo(JPanel panel, GridBagConstraints gbc, String label, JTextField field, int col, int row) {
         gbc.gridx = col; gbc.gridy = row; gbc.weightx = 0;
-        panel.add(new JLabel(label), gbc);
+        JLabel lbl = new JLabel(label);
+        lbl.setHorizontalAlignment(SwingConstants.RIGHT);
+        panel.add(lbl, gbc);
         gbc.gridx = col + 1; gbc.weightx = 1;
         panel.add(field, gbc);
     }

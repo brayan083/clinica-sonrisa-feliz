@@ -20,6 +20,10 @@ import java.time.LocalTime;
 import clinicasonrisafeliz.presentacion.gui.VentanaLogin;
 import clinicasonrisafeliz.presentacion.gui.VentanaPrincipal;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.plaf.FontUIResource;
+import java.awt.Font;
+import java.awt.Color;
 import clinicasonrisafeliz.repositorio.RepositorioOdontologo;
 import clinicasonrisafeliz.repositorio.RepositorioPaciente;
 import clinicasonrisafeliz.repositorio.RepositorioRecepcionista;
@@ -91,6 +95,8 @@ public class Main {
 
         // ── Presentación GUI (Swing) ──────────────────────────────────────────
         SwingUtilities.invokeLater(() -> {
+            configurarAparienciaVisual();
+
             VentanaLogin login = new VentanaLogin(null, controladorRecepcionista);
             login.setVisible(true);
 
@@ -108,6 +114,61 @@ public class Main {
                 System.exit(0);
             }
         });
+    }
+
+    private static void configurarAparienciaVisual() {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar Nimbus L&F.");
+        }
+
+        // Fuente global
+        Font globalFont = new Font("Roboto", Font.PLAIN, 14);
+        if (!java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames().toString().contains("Roboto")) {
+            globalFont = new Font("Segoe UI", Font.PLAIN, 14);
+        }
+        setUIFont(new FontUIResource(globalFont));
+
+        // Colores globales (Sage Green & Charcoal)
+        UIManager.put("control", new Color(244, 244, 249)); // Fondo general claro
+        UIManager.put("info", new Color(244, 244, 249));
+        UIManager.put("nimbusBase", new Color(82, 121, 111)); // Color base (Sage)
+        UIManager.put("nimbusAlertYellow", new Color(248, 187, 86));
+        UIManager.put("nimbusDisabledText", new Color(128, 128, 128));
+        UIManager.put("nimbusFocus", new Color(132, 169, 140)); // Focus (Light Sage)
+        UIManager.put("nimbusGreen", new Color(82, 121, 111));
+        UIManager.put("nimbusInfoBlue", new Color(82, 121, 111));
+        UIManager.put("nimbusLightBackground", new Color(255, 255, 255));
+        UIManager.put("nimbusOrange", new Color(191, 98, 4));
+        UIManager.put("nimbusRed", new Color(169, 46, 34));
+        UIManager.put("nimbusSelectedText", new Color(255, 255, 255));
+        UIManager.put("nimbusSelectionBackground", new Color(82, 121, 111));
+        UIManager.put("text", new Color(53, 79, 82)); // Charcoal text
+
+        // Configuraciones globales para Tablas
+        UIManager.put("Table.rowHeight", 25);
+        UIManager.put("Table.showVerticalLines", false);
+        UIManager.put("Table.gridColor", new Color(220, 220, 220));
+        UIManager.put("TableHeader.background", new Color(82, 121, 111));
+        UIManager.put("TableHeader.foreground", Color.WHITE);
+        UIManager.put("TableHeader.font", new Font("Roboto", Font.BOLD, 14));
+    }
+
+    private static void setUIFont(FontUIResource f) {
+        java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof FontUIResource) {
+                UIManager.put(key, f);
+            }
+        }
     }
 
     private static void cargarDesdeCSV(RepositorioPaciente repoPaciente, RepositorioOdontologo repoOdontologo,

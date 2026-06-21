@@ -23,13 +23,22 @@ public class VentanaLogin extends JDialog {
     }
 
     private void initComponents() {
-        JTabbedPane tabbedPane = new JTabbedPane();
+        CardLayout cardLayout = new CardLayout();
+        JPanel panelContenedor = new JPanel(cardLayout);
+        
+        // ── PANEL DE LOGIN ──
+        JPanel panelLoginWrapper = new JPanel(new BorderLayout());
+        panelLoginWrapper.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        
+        JLabel lblTituloLogin = new JLabel("Bienvenido a Sonrisa Feliz", SwingConstants.CENTER);
+        lblTituloLogin.setFont(new Font("Roboto", Font.BOLD, 22));
+        lblTituloLogin.setForeground(new Color(53, 79, 82));
+        lblTituloLogin.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        panelLoginWrapper.add(lblTituloLogin, BorderLayout.NORTH);
 
-        // Panel de Login
         JPanel panelLogin = new JPanel(new GridBagLayout());
-        panelLogin.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         gbc.gridx = 0; gbc.gridy = 0;
@@ -39,14 +48,43 @@ public class VentanaLogin extends JDialog {
         panelLogin.add(txtLegajoLogin, gbc);
 
         JButton btnLogin = new JButton("Iniciar Sesión");
+        btnLogin.setBackground(new Color(82, 121, 111));
+        btnLogin.setForeground(Color.WHITE);
+        btnLogin.setFocusPainted(false);
         btnLogin.addActionListener(e -> login());
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
+        gbc.insets = new Insets(20, 10, 10, 10);
         panelLogin.add(btnLogin, gbc);
 
-        // Panel de Registro
+        JButton btnIrARegistro = new JButton("¿No tienes cuenta? Regístrate");
+        btnIrARegistro.setContentAreaFilled(false);
+        btnIrARegistro.setBorderPainted(false);
+        btnIrARegistro.setForeground(new Color(82, 121, 111));
+        btnIrARegistro.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnIrARegistro.addActionListener(e -> {
+            cardLayout.show(panelContenedor, "REGISTRO");
+            pack();
+            setLocationRelativeTo(getParent());
+        });
+        gbc.gridy = 2; gbc.insets = new Insets(5, 10, 10, 10);
+        panelLogin.add(btnIrARegistro, gbc);
+
+        panelLoginWrapper.add(panelLogin, BorderLayout.CENTER);
+
+        // ── PANEL DE REGISTRO ──
+        JPanel panelRegWrapper = new JPanel(new BorderLayout());
+        panelRegWrapper.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        
+        JLabel lblTituloReg = new JLabel("Crear Nueva Cuenta", SwingConstants.CENTER);
+        lblTituloReg.setFont(new Font("Roboto", Font.BOLD, 22));
+        lblTituloReg.setForeground(new Color(53, 79, 82));
+        lblTituloReg.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        panelRegWrapper.add(lblTituloReg, BorderLayout.NORTH);
+
         JPanel panelReg = new JPanel(new GridBagLayout());
-        panelReg.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        gbc.gridwidth = 1;
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         
         gbc.gridx = 0; gbc.gridy = 0; panelReg.add(new JLabel("Nombre:"), gbc);
         txtNombreReg = new JTextField(15); gbc.gridx = 1; panelReg.add(txtNombreReg, gbc);
@@ -61,14 +99,33 @@ public class VentanaLogin extends JDialog {
         txtLegajoReg = new JTextField(15); gbc.gridx = 1; panelReg.add(txtLegajoReg, gbc);
 
         JButton btnReg = new JButton("Registrarse");
+        btnReg.setBackground(new Color(82, 121, 111));
+        btnReg.setForeground(Color.WHITE);
+        btnReg.setFocusPainted(false);
         btnReg.addActionListener(e -> registrar());
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
+        gbc.insets = new Insets(20, 10, 10, 10);
         panelReg.add(btnReg, gbc);
 
-        tabbedPane.addTab("Iniciar Sesión", panelLogin);
-        tabbedPane.addTab("Registrarse", panelReg);
+        JButton btnIrALogin = new JButton("¿Ya tienes cuenta? Inicia Sesión");
+        btnIrALogin.setContentAreaFilled(false);
+        btnIrALogin.setBorderPainted(false);
+        btnIrALogin.setForeground(new Color(82, 121, 111));
+        btnIrALogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnIrALogin.addActionListener(e -> {
+            cardLayout.show(panelContenedor, "LOGIN");
+            pack();
+            setLocationRelativeTo(getParent());
+        });
+        gbc.gridy = 5; gbc.insets = new Insets(5, 10, 10, 10);
+        panelReg.add(btnIrALogin, gbc);
 
-        add(tabbedPane);
+        panelRegWrapper.add(panelReg, BorderLayout.CENTER);
+
+        panelContenedor.add(panelLoginWrapper, "LOGIN");
+        panelContenedor.add(panelRegWrapper, "REGISTRO");
+
+        add(panelContenedor);
     }
 
     private void login() {
