@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Informe Entrega 4 – Clínica Sonrisa Feliz</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; font-size: 11pt; color: #1a1a2e; background: #fff; line-height: 1.6; }
+
+    .cover {
+      page-break-after: always;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; text-align: center; padding: 60px 40px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: white;
+    }
+    .cover-logo { font-size: 52pt; margin-bottom: 24px; }
+    .cover-uni { font-size: 11pt; letter-spacing: 3px; text-transform: uppercase; color: #a0b4cc; margin-bottom: 8px; }
+    .cover-materia { font-size: 13pt; color: #c0d0e0; margin-bottom: 48px; }
+    .cover-title { font-size: 28pt; font-weight: 700; line-height: 1.2; margin-bottom: 8px; color: #fff; }
+    .cover-subtitle { font-size: 16pt; font-weight: 300; color: #7ec8e3; margin-bottom: 56px; }
+    .cover-divider { width: 80px; height: 3px; background: #7ec8e3; margin: 0 auto 48px; border-radius: 2px; }
+    .cover-badge { display: inline-block; background: rgba(126,200,227,0.2); border: 1px solid rgba(126,200,227,0.4); border-radius: 20px; padding: 6px 20px; font-size: 10pt; letter-spacing: 1px; color: #7ec8e3; margin-bottom: 32px; }
+    .cover-info { display: flex; flex-direction: column; gap: 10px; font-size: 11pt; color: #c0d0e0; }
+    .cover-info strong { color: white; }
+
+    .page { padding: 48px 56px; max-width: 900px; margin: 0 auto; }
+    .page-break { page-break-before: always; }
+
+    .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid #e8eef6; }
+    .section-number { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #0f3460; color: white; border-radius: 8px; font-size: 14pt; font-weight: 700; flex-shrink: 0; }
+    .section-title { font-size: 17pt; font-weight: 600; color: #0f3460; }
+
+    h3 { font-size: 12pt; font-weight: 600; color: #0f3460; margin: 24px 0 10px; }
+    h4 { font-size: 10.5pt; font-weight: 600; color: #0f3460; margin: 16px 0 6px; }
+    p { margin-bottom: 12px; color: #2d3748; }
+
+    table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 10pt; }
+    thead { background: #0f3460; color: white; }
+    thead th { padding: 10px 14px; text-align: left; font-weight: 600; }
+    tbody tr:nth-child(even) { background: #f0f4f8; }
+    tbody tr:nth-child(odd) { background: #ffffff; }
+    tbody td { padding: 9px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+
+    .code-block { background: #1a1a2e; color: #e2e8f0; border-radius: 8px; padding: 16px 20px; font-family: 'Courier New', monospace; font-size: 9pt; line-height: 1.7; margin: 12px 0 20px; white-space: pre; overflow-x: auto; }
+    .kw { color: #7ec8e3; } .cls { color: #ffd700; } .str { color: #98d98e; } .cmt { color: #6b8099; font-style: italic; }
+
+    .hierarchy { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px 24px; margin: 16px 0; font-family: 'Courier New', monospace; font-size: 10pt; line-height: 1.9; white-space: pre; overflow-x: auto; }
+    .h-base { color: #0f3460; font-weight: 700; } .h-l1 { color: #2b6cb0; } .h-l2 { color: #2d8a4e; }
+
+    .badge { display: inline-block; background: #ebf4ff; color: #1a56db; border: 1px solid #bfdbfe; border-radius: 4px; padding: 2px 8px; font-size: 8.5pt; font-family: 'Courier New', monospace; font-weight: 600; }
+    .badge-green { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+
+    .callout { background: #eff6ff; border-left: 4px solid #2563eb; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 10.5pt; }
+    .callout.success { background: #f0fdf4; border-color: #16a34a; }
+
+    ul, ol { padding-left: 22px; margin-bottom: 12px; }
+    li { margin-bottom: 5px; color: #2d3748; }
+
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+    .feature-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; }
+    .feature-card h4 { font-size: 10pt; font-weight: 600; color: #0f3460; margin: 0 0 6px; }
+    .feature-card p { font-size: 9.5pt; color: #4a5568; margin: 0; }
+
+    .shot { border: 2px dashed #94a3b8; border-radius: 10px; background: #f1f5f9; color: #64748b;
+            text-align: center; padding: 48px 20px; margin: 14px 0 8px; font-size: 10pt; }
+    .shot-caption { text-align: center; font-size: 9.5pt; color: #64748b; margin-bottom: 24px; font-style: italic; }
+
+    @media print {
+      .cover { min-height: 100vh; }
+      .page-break { page-break-before: always; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════ PORTADA ════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">&#129463;</div>
+  <div class="cover-uni">Universidad Argentina de la Empresa &middot; UADE</div>
+  <div class="cover-materia">Programaci&oacute;n Orientada a Objetos</div>
+  <div class="cover-badge">ENTREGA 4 &middot; FINAL</div>
+  <div class="cover-title">Cl&iacute;nica Sonrisa Feliz</div>
+  <div class="cover-subtitle">Interfaz Gr&aacute;fica (Swing), Eventos e Hilos</div>
+  <div class="cover-divider"></div>
+  <div class="cover-info">
+    <div><strong>Fecha de entrega:</strong> 23 de junio de 2026</div>
+    <div><strong>Tecnolog&iacute;a:</strong> Java &middot; Swing &middot; Arquitectura en capas &middot; CSV</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════ SECCIÓN 1 ════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <div class="section-title">Objetivo y Alcance de la Entrega</div>
+  </div>
+
+  <p>Esta entrega final reemplaza la interfaz por consola de las entregas anteriores por una
+  <strong>interfaz gr&aacute;fica completa desarrollada con Java Swing</strong>. El sistema es funcional
+  de punta a punta: el usuario interact&uacute;a con ventanas, botones y tablas; la GUI captura el evento,
+  lo delega a la capa de servicios (a trav&eacute;s de los controladores), las reglas de negocio se validan
+  con excepciones de dominio y la informaci&oacute;n se persiste de forma transparente en archivos CSV.</p>
+
+  <div class="callout success">
+    <strong>Principio rector:</strong> la interfaz gr&aacute;fica <em>nunca</em> accede a los repositorios ni a
+    los archivos directamente. Toda operaci&oacute;n viaja por la cadena
+    <span class="badge">GUI &rarr; Controlador &rarr; Servicio &rarr; Repositorio &rarr; Persistencia</span>,
+    reutilizando &iacute;ntegramente la l&oacute;gica construida en las Entregas 2 y 3.
+  </div>
+
+  <h3>1.1 Funcionalidades implementadas</h3>
+  <div class="feature-grid">
+    <div class="feature-card"><h4>Gesti&oacute;n de Pacientes</h4><p>Alta, baja, modificaci&oacute;n, listado y b&uacute;squeda por apellido, con formulario y tabla.</p></div>
+    <div class="feature-card"><h4>Gesti&oacute;n de Odont&oacute;logos</h4><p>Mismo ABM completo, con validaci&oacute;n de matr&iacute;cula &uacute;nica.</p></div>
+    <div class="feature-card"><h4>Gesti&oacute;n de Turnos</h4><p>Reserva con selecci&oacute;n de paciente y odont&oacute;logo por <code>JComboBox</code>, fecha y hora; confirmar, completar, cancelar y modificar.</p></div>
+    <div class="feature-card"><h4>B&uacute;squedas</h4><p>Consultas por DNI, apellido, matr&iacute;cula, estado y rango de fechas con resultados en <code>JTable</code>.</p></div>
+    <div class="feature-card"><h4>Eventos y validaci&oacute;n</h4><p><code>ActionListener</code>, <code>MouseListener</code> y <code>WindowListener</code>; campos inv&aacute;lidos resaltados en rojo.</p></div>
+    <div class="feature-card"><h4>Hilos (opcional)</h4><p><code>SwingWorker</code> para la carga inicial y un hilo de recordatorios de turnos pr&oacute;ximos.</p></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════ SECCIÓN 2 ════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <div class="section-title">Arquitectura del Sistema</div>
+  </div>
+
+  <p>El sistema mantiene la <strong>arquitectura en capas</strong> de las entregas previas y agrega una nueva
+  capa de presentaci&oacute;n gr&aacute;fica (<span class="badge">presentacion.gui</span>) que convive con la de
+  consola (<span class="badge">presentacion.consola</span>). Ambas se apoyan sobre exactamente los mismos
+  controladores, servicios y repositorios.</p>
+
+  <div class="hierarchy"><span class="h-base">presentacion.gui</span>   <span class="cmt">// Swing: ventanas, paneles, modelos de tabla, hilos</span>
+      &darr;
+<span class="h-l1">controlador</span>        <span class="cmt">// valida entrada y orquesta servicios</span>
+      &darr;
+<span class="h-l1">servicio</span>           <span class="cmt">// reglas de negocio + excepciones de dominio</span>
+      &darr;
+<span class="h-l1">repositorio</span>        <span class="cmt">// almacenamiento en memoria (HashMap/ArrayList)</span>
+      &darr;
+<span class="h-l2">io.PersistenciaCSV</span> <span class="cmt">// lectura/escritura de archivos .csv</span></div>
+
+  <h3>2.1 El punto de armado: <code>ContextoAplicacion</code></h3>
+  <p>Para evitar duplicar el cableado entre la versi&oacute;n gr&aacute;fica y la de consola, se introdujo la clase
+  <span class="badge">ContextoAplicacion</span> (patr&oacute;n <em>composition root</em>). Construye las cuatro capas,
+  carga los datos (desde CSV o datos de prueba) y expone los controladores. Tanto <code>Main</code> (GUI) como
+  <code>MainConsola</code> la reutilizan.</p>
+
+  <div class="code-block"><span class="kw">public class</span> <span class="cls">ContextoAplicacion</span> {
+    <span class="cmt">// arma repositorios &rarr; servicios &rarr; controladores y carga los datos</span>
+    <span class="kw">public</span> ControladorPaciente getControladorPaciente() { ... }
+    <span class="kw">public</span> ControladorTurno    getControladorTurno()    { ... }
+    <span class="cmt">// red de seguridad usada por el WindowListener al cerrar</span>
+    <span class="kw">public void</span> guardarTodo() <span class="kw">throws</span> IOException { ... }
+}</div>
+
+  <h3>2.2 Diagrama UML de clases</h3>
+  <div class="shot">[ Insertar aqu&iacute; el diagrama de clases renderizado<br>desde <code>uml/diagramas/clases_entrega4.puml</code> ]</div>
+  <div class="shot-caption">Figura 1. Diagrama de clases del sistema completo, incluyendo la capa de presentaci&oacute;n gr&aacute;fica.</div>
+</div>
+
+<!-- ════════════════════════════ SECCIÓN 3 ════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <div class="section-title">Decisiones de Dise&ntilde;o y Patrones</div>
+  </div>
+
+  <h3>3.1 Separaci&oacute;n GUI &ndash; Servicios &ndash; Repositorios</h3>
+  <p>Cada panel recibe por constructor &uacute;nicamente el o los controladores que necesita
+  (<em>inyecci&oacute;n de dependencias</em>). As&iacute; el panel desconoce c&oacute;mo se persiste o valida un dato:
+  solo invoca m&eacute;todos del controlador y muestra el resultado o el mensaje de error.</p>
+
+  <h3>3.2 Modelos de tabla</h3>
+  <p>Se usaron <strong>ambos</strong> enfoques que admite la c&aacute;tedra, eligiendo el adecuado seg&uacute;n el caso:</p>
+  <table>
+    <thead><tr><th>Enfoque</th><th>D&oacute;nde</th><th>Por qu&eacute;</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge">AbstractTableModel</span></td><td>Pacientes, Odont&oacute;logos, Turnos</td><td>Opera directamente sobre objetos del dominio; la tabla queda sincronizada con el modelo sin copiar celda por celda.</td></tr>
+      <tr><td><span class="badge">DefaultTableModel</span></td><td>Panel de B&uacute;squedas</td><td>Las columnas cambian seg&uacute;n el tipo de b&uacute;squeda; un modelo gen&eacute;rico es m&aacute;s pr&aacute;ctico.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.3 Patrones aplicados</h3>
+  <table>
+    <thead><tr><th>Patr&oacute;n</th><th>Aplicaci&oacute;n en el proyecto</th></tr></thead>
+    <tbody>
+      <tr><td>Capas (Layered)</td><td>Presentaci&oacute;n / Controlador / Servicio / Repositorio / Persistencia.</td></tr>
+      <tr><td>Composition Root</td><td><code>ContextoAplicacion</code> centraliza la creaci&oacute;n y el cableado de objetos.</td></tr>
+      <tr><td>Controlador (GRASP)</td><td>Los <code>Controlador*</code> reciben los eventos de la GUI y coordinan los servicios.</td></tr>
+      <tr><td>Bajo acoplamiento / Alta cohesi&oacute;n</td><td>Cada panel y cada servicio tienen una &uacute;nica responsabilidad clara.</td></tr>
+      <tr><td>Observer (Swing)</td><td>Los <em>listeners</em> (<code>ActionListener</code>, <code>MouseListener</code>) observan los componentes.</td></tr>
+      <tr><td>Repository</td><td>Abstracci&oacute;n del almacenamiento detr&aacute;s de <code>IRepositorio&lt;T&gt;</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.4 Componentes reutilizables</h3>
+  <ul>
+    <li><span class="badge">GuiUtils</span>: di&aacute;logos (<code>JOptionPane</code>), validaci&oacute;n visual con bordes rojos y parseo de fecha/hora.</li>
+    <li><span class="badge">ItemCombo&lt;T&gt;</span>: envoltorio gen&eacute;rico para mostrar entidades en un <code>JComboBox</code>.</li>
+    <li>Los tres <code>TableModel</code> comparten la misma estructura y patr&oacute;n de uso.</li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════ SECCIÓN 4 ════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <div class="section-title">Manejo de Eventos e Hilos</div>
+  </div>
+
+  <h3>4.1 Eventos</h3>
+  <table>
+    <thead><tr><th>Evento</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge">ActionListener</span></td><td>En todos los botones (alta, baja, modificaci&oacute;n, b&uacute;squeda), &iacute;tems de men&uacute; y el combo de tipo de b&uacute;squeda.</td></tr>
+      <tr><td><span class="badge">MouseListener</span></td><td>En las tablas: al hacer clic en una fila se cargan sus datos en el formulario para editar.</td></tr>
+      <tr><td><span class="badge">WindowListener</span></td><td>En la ventana principal: al cerrar, confirma y <strong>guarda autom&aacute;ticamente</strong> los datos.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 Validaci&oacute;n visual de campos</h3>
+  <p>Antes de enviar datos al controlador, cada formulario valida sus campos. Los inv&aacute;lidos se resaltan con
+  un <strong>borde rojo</strong> y se muestra un mensaje; los v&aacute;lidos recuperan su borde normal.</p>
+  <div class="code-block"><span class="kw">public static boolean</span> <span class="cls">validarNoVacio</span>(JTextComponent campo) {
+    <span class="kw">if</span> (campo.getText().isBlank()) { marcarInvalido(campo); <span class="kw">return false</span>; }
+    limpiarBorde(campo); <span class="kw">return true</span>;
+}</div>
+
+  <h3>4.3 Hilos en segundo plano</h3>
+  <ul>
+    <li><span class="badge">SwingWorker</span> &mdash; <strong>carga inicial</strong>: al arrancar se muestra una pantalla de carga con barra de progreso mientras se leen los CSV en segundo plano, sin congelar la interfaz.</li>
+    <li><span class="badge">RecordatorioTurnos</span> (<code>Runnable</code> en hilo demonio) &mdash; cada cierto intervalo detecta turnos dentro de los pr&oacute;ximos 2 d&iacute;as y muestra un recordatorio en la barra de estado. Las actualizaciones de UI se hacen con <code>SwingUtilities.invokeLater</code> para respetar el <em>Event Dispatch Thread</em>.</li>
+    <li>El <strong>guardado</strong> tambi&eacute;n se ejecuta sin bloquear la interfaz y reporta el resultado al usuario.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Seguridad de hilos:</strong> Swing no es <em>thread-safe</em>. Todo el trabajo de fondo ocurre fuera del EDT,
+    pero cualquier cambio en componentes visuales se reenv&iacute;a al EDT mediante <code>invokeLater</code> o los
+    m&eacute;todos <code>done()</code>/<code>process()</code> de <code>SwingWorker</code>.
+  </div>
+</div>
+
+<!-- ════════════════════════════ SECCIÓN 5 ════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <div class="section-title">Manual de Usuario</div>
+  </div>
+
+  <p>Esta secci&oacute;n describe el uso de la aplicaci&oacute;n. <em>Reemplazar cada recuadro punteado por la captura
+  de pantalla correspondiente.</em></p>
+
+  <h3>5.1 Acceso al sistema</h3>
+  <p>Al iniciar, la aplicaci&oacute;n muestra una pantalla de carga y luego la ventana de acceso. Ingres&aacute; con un
+  legajo de recepcionista existente (por ejemplo <span class="badge">REC-001</span>) o registr&aacute; una nueva
+  recepcionista desde el bot&oacute;n <em>Registrarse</em>.</p>
+  <div class="shot">[ Captura: ventana de Login / Registro ]</div>
+  <div class="shot-caption">Figura 2. Pantalla de inicio de sesi&oacute;n.</div>
+
+  <h3>5.2 Gesti&oacute;n de pacientes</h3>
+  <p>La tabla lista todos los pacientes. Al hacer clic en una fila, sus datos se cargan en el formulario inferior.
+  Us&aacute; <em>Nuevo / Limpiar</em> para dar de alta, <em>Guardar</em> para confirmar el alta o la edici&oacute;n, y
+  <em>Eliminar</em> para la baja (se pide confirmaci&oacute;n). La barra superior permite buscar por apellido.</p>
+  <div class="shot">[ Captura: panel de Pacientes con tabla y formulario ]</div>
+  <div class="shot-caption">Figura 3. Gesti&oacute;n de pacientes.</div>
+
+  <h3>5.3 Gesti&oacute;n de odont&oacute;logos</h3>
+  <div class="shot">[ Captura: panel de Odont&oacute;logos ]</div>
+  <div class="shot-caption">Figura 4. Gesti&oacute;n de odont&oacute;logos.</div>
+
+  <h3>5.4 Gesti&oacute;n de turnos</h3>
+  <p>Seleccion&aacute; paciente y odont&oacute;logo en los desplegables, eleg&iacute; la fecha y la hora en los
+  <em>spinners</em> (que evitan errores de formato) y pres&iacute; <em>Reservar turno</em>. En la tabla, el
+  <strong>estado se muestra con colores</strong> (&aacute;mbar: pendiente, verde: confirmado, rojo: cancelado,
+  gris: completado). Al seleccionar un turno, los botones de acci&oacute;n se habilitan seg&uacute;n su estado:
+  <em>Confirmar</em>, <em>Completar</em> o <em>Cancelar</em>. Para cambiar la fecha/hora, pres&iacute;
+  <em>Modificar fecha/hora</em> (o hac&eacute; doble clic en la fila): se abre un di&aacute;logo con la fecha y hora
+  actuales ya cargadas.</p>
+  <div class="shot">[ Captura: panel de Turnos con combos y acciones ]</div>
+  <div class="shot-caption">Figura 5. Gesti&oacute;n de turnos.</div>
+
+  <h3>5.5 B&uacute;squedas</h3>
+  <p>Eleg&iacute; el tipo de b&uacute;squeda en el desplegable, complet&aacute; el criterio y pres&iacute; <em>Buscar</em>. Los
+  resultados aparecen en la tabla.</p>
+  <div class="shot">[ Captura: panel de B&uacute;squedas con resultados ]</div>
+  <div class="shot-caption">Figura 6. B&uacute;squedas avanzadas.</div>
+
+  <h3>5.6 Mensajes y guardado</h3>
+  <p>Las confirmaciones y errores se muestran mediante <code>JOptionPane</code>. Al cerrar la aplicaci&oacute;n, los datos
+  se guardan autom&aacute;ticamente en la carpeta <code>datos/</code>.</p>
+  <div class="shot">[ Captura: di&aacute;logo de confirmaci&oacute;n / error ]</div>
+  <div class="shot-caption">Figura 7. Di&aacute;logos de confirmaci&oacute;n y error.</div>
+</div>
+
+<!-- ════════════════════════════ SECCIÓN 6 ════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-number">6</div>
+    <div class="section-title">Reflexi&oacute;n del Equipo</div>
+  </div>
+
+  <p>La incorporaci&oacute;n de la interfaz gr&aacute;fica confirm&oacute; el valor de haber respetado la arquitectura en
+  capas desde el comienzo: reemplazar la consola por Swing no requiri&oacute; tocar una sola l&iacute;nea de la l&oacute;gica
+  de negocio ni de la persistencia. La GUI se conect&oacute; a los mismos controladores, y todas las reglas
+  (DNI/matr&iacute;cula &uacute;nicos, fechas no pasadas, turnos solapados, bajas con turnos futuros) siguieron
+  funcionando sin cambios.</p>
+
+  <p>El principal aprendizaje t&eacute;cnico fue el <strong>modelo de concurrencia de Swing</strong>: comprender que la
+  interfaz vive en el <em>Event Dispatch Thread</em> y que el trabajo de fondo (carga de archivos, recordatorios)
+  debe ejecutarse en otros hilos y reenviar al EDT cualquier actualizaci&oacute;n visual. Tambi&eacute;n se reforz&oacute; el
+  uso de modelos de tabla, manejo de eventos y validaci&oacute;n de formularios.</p>
+
+  <p>Como cierre del proyecto, el equipo logr&oacute; un sistema funcional de punta a punta, con una separaci&oacute;n de
+  responsabilidades clara, c&oacute;digo modular y reutilizable, y una experiencia de usuario consistente. Las cuatro
+  entregas quedaron integradas sobre una base com&uacute;n s&oacute;lida.</p>
+
+  <div class="callout success">
+    <strong>Resultado:</strong> aplicaci&oacute;n de escritorio completa (JAR ejecutable), con interfaz gr&aacute;fica
+    profesional, manejo de eventos e hilos, e integraci&oacute;n total con las capas de servicios, excepciones y
+    persistencia de las entregas anteriores.
+  </div>
+
+  <h3>6.1 C&oacute;mo ejecutar</h3>
+  <div class="code-block"><span class="cmt"># Ejecutar el JAR ya generado</span>
+java -jar dist/ClinicaSonrisaFeliz.jar
+
+<span class="cmt"># O compilar y empaquetar desde cero</span>
+./build.sh run</div>
+  <p>Ver <code>INSTRUCCIONES.md</code> para el detalle completo de compilaci&oacute;n y ejecuci&oacute;n.</p>
+</div>
+
+</body>
+</html>

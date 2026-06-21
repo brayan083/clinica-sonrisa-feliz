@@ -1,2 +1,3 @@
 id;pacienteId;odontologoId;fecha;hora;estado;recepcionistaLegajo
-1;2;5;2026-05-27;12:00;PENDIENTE;1234
+1;2;5;2026-05-27;12:00;COMPLETADO;1234
+2;10;6;2026-06-27;12:00;PENDIENTE;1234

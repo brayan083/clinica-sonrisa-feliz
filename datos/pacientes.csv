@@ -1,5 +1,6 @@
 id;nombre;apellido;email;dni;fechaIngreso;domId;calle;numero;localidad;provincia
+4;Ana;Fernández;ana.fernandez@email.com;32345678;2026-05-24;4;San Martín;321;Mendoza;Mendoza
 1;Juan;García;juan.garcia@email.com;30123456;2026-05-24;1;Av. Corrientes;1234;Buenos Aires;CABA
 2;María;López;maria.lopez@email.com;28456789;2026-05-24;2;Calle Florida;567;Rosario;Santa Fe
 3;Carlos;Martínez;carlos.martinez@email.com;35789012;2026-05-24;3;Belgrano;890;Córdoba;Córdoba
-4;Ana;Fernández;ana.fernandez@email.com;32345678;2026-05-24;4;San Martín;321;Mendoza;Mendoza
+10;pepe;Perez;PepePerez123@gmail.com;12345678;2026-06-21;5;calle falsa;123;Caba;Buenos Aires

@@ -1,0 +1,189 @@
+@startuml clases_entrega4
+title Clínica Sonrisa Feliz — Diagrama de clases (Entrega 4: GUI Swing)
+
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+left to right direction
+
+' ──────────────────────────────────────────────────────────────────────
+package "modelo" {
+    abstract class Persona {
+        - id : Long
+        - nombre : String
+        - apellido : String
+        - email : String
+        + {abstract} getRol() : String
+        + {abstract} getIdentificador() : String
+        + getNombreCompleto() : String
+    }
+    class Paciente {
+        - dni : String
+        - fechaIngreso : LocalDate
+    }
+    class Odontologo {
+        - matricula : String
+    }
+    class Recepcionista {
+        - legajo : String
+    }
+    class Domicilio {
+        - calle : String
+        - numero : String
+        - localidad : String
+        - provincia : String
+    }
+    class Agenda {
+        + agregarTurno(t : Turno)
+        + estaDisponible(f, h) : boolean
+    }
+    class Turno {
+        - id : Long
+        - fecha : LocalDate
+        - hora : LocalTime
+        - estado : EstadoTurno
+    }
+    enum EstadoTurno {
+        PENDIENTE
+        CONFIRMADO
+        CANCELADO
+        COMPLETADO
+    }
+
+    Persona <|-- Paciente
+    Persona <|-- Odontologo
+    Persona <|-- Recepcionista
+    Paciente "1" *-- "1" Domicilio
+    Odontologo "1" *-- "1" Agenda
+    Agenda "1" o-- "*" Turno
+    Turno "*" --> "1" Paciente
+    Turno "*" --> "1" Odontologo
+    Turno "*" --> "1" Recepcionista
+    Turno --> EstadoTurno
+}
+
+' ──────────────────────────────────────────────────────────────────────
+package "repositorio" {
+    interface "IRepositorio<T>" as IRepo {
+        + guardar(t : T)
+        + buscarPorId(id) : T
+        + buscarTodos() : List<T>
+        + actualizar(t : T)
+        + eliminar(id)
+    }
+    class RepositorioPaciente
+    class RepositorioOdontologo
+    class RepositorioTurno
+    class RepositorioRecepcionista
+
+    IRepo <|.. RepositorioPaciente
+    IRepo <|.. RepositorioOdontologo
+    IRepo <|.. RepositorioTurno
+    IRepo <|.. RepositorioRecepcionista
+}
+
+' ──────────────────────────────────────────────────────────────────────
+package "io" {
+    class PersistenciaCSV {
+        + {static} guardarPacientes(...)
+        + {static} cargarPacientes() : List<Paciente>
+        + {static} guardarTurnos(...)
+        + {static} cargarTurnos(...) : List<Turno>
+    }
+}
+
+' ──────────────────────────────────────────────────────────────────────
+package "servicio" {
+    class ServicioPaciente
+    class ServicioOdontologo
+    class ServicioTurno
+    class ServicioRecepcionista
+}
+
+' ──────────────────────────────────────────────────────────────────────
+package "excepcion" {
+    class ClinicaException
+    class DniDuplicadoException
+    class MatriculaDuplicadaException
+    class FechaInvalidaException
+    class TurnoYaReservadoException
+    class OperacionNoPermitidaException
+    class DatoInvalidoException
+    note bottom of ClinicaException : extends RuntimeException\n(todas las demás heredan de esta)
+}
+
+' ──────────────────────────────────────────────────────────────────────
+package "controlador" {
+    class ControladorPaciente
+    class ControladorOdontologo
+    class ControladorTurno
+    class ControladorRecepcionista
+}
+
+' ──────────────────────────────────────────────────────────────────────
+package "presentacion.gui" {
+    class Main << entry >>
+    class ContextoAplicacion
+    class VentanaLogin
+    class VentanaPrincipal
+    class PanelPacientes
+    class PanelOdontologos
+    class PanelTurnos
+    class PanelBusquedas
+    class PacienteTableModel
+    class OdontologoTableModel
+    class TurnoTableModel
+    class RecordatorioTurnos << Runnable >>
+    class PantallaCarga
+    class GuiUtils
+    class "ItemCombo<T>" as ItemCombo
+}
+
+' ── Relaciones entre capas ──────────────────────────────────────────────
+RepositorioPaciente      ..> PersistenciaCSV
+RepositorioOdontologo    ..> PersistenciaCSV
+RepositorioTurno         ..> PersistenciaCSV
+RepositorioRecepcionista ..> PersistenciaCSV
+
+ServicioPaciente      --> RepositorioPaciente
+ServicioOdontologo    --> RepositorioOdontologo
+ServicioTurno         --> RepositorioTurno
+ServicioRecepcionista --> RepositorioRecepcionista
+ServicioPaciente      ..> DniDuplicadoException
+ServicioOdontologo    ..> MatriculaDuplicadaException
+ServicioTurno         ..> TurnoYaReservadoException
+ServicioTurno         ..> FechaInvalidaException
+
+ControladorPaciente      --> ServicioPaciente
+ControladorPaciente      --> ServicioTurno
+ControladorOdontologo    --> ServicioOdontologo
+ControladorOdontologo    --> ServicioTurno
+ControladorTurno         --> ServicioTurno
+ControladorTurno         --> ServicioPaciente
+ControladorTurno         --> ServicioOdontologo
+ControladorRecepcionista --> ServicioRecepcionista
+
+Main --> ContextoAplicacion
+Main --> VentanaLogin
+Main --> PantallaCarga
+ContextoAplicacion --> ControladorPaciente
+ContextoAplicacion --> ControladorOdontologo
+ContextoAplicacion --> ControladorTurno
+ContextoAplicacion --> ControladorRecepcionista
+VentanaLogin --> VentanaPrincipal
+VentanaPrincipal *-- PanelPacientes
+VentanaPrincipal *-- PanelOdontologos
+VentanaPrincipal *-- PanelTurnos
+VentanaPrincipal *-- PanelBusquedas
+VentanaPrincipal --> RecordatorioTurnos
+PanelPacientes   --> ControladorPaciente
+PanelOdontologos --> ControladorOdontologo
+PanelTurnos      --> ControladorTurno
+PanelBusquedas   --> ControladorTurno
+PanelPacientes   *-- PacienteTableModel
+PanelOdontologos *-- OdontologoTableModel
+PanelTurnos      *-- TurnoTableModel
+PanelTurnos      ..> ItemCombo
+RecordatorioTurnos --> ControladorTurno
+
+note "Capas: GUI → Controlador → Servicio → Repositorio → Persistencia.\nLa GUI nunca accede a los repositorios directamente." as N1
+@enduml
