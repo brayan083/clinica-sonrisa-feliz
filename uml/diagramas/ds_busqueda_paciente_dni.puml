@@ -1,0 +1,37 @@
+@startuml
+title Búsqueda de paciente por DNI
+
+actor Usuario
+participant MenuPacientes
+participant ControladorPaciente
+participant ServicioPaciente
+participant RepositorioPaciente
+
+Usuario -> MenuPacientes: selecciona "Buscar por DNI"
+MenuPacientes -> Usuario: solicita DNI
+Usuario -> MenuPacientes: ingresa dni
+
+MenuPacientes -> ControladorPaciente: buscarPorDni(dni)
+ControladorPaciente -> ControladorPaciente: validarTexto(dni)
+
+alt DNI vacío
+  ControladorPaciente --> MenuPacientes: throws DatoInvalidoException
+  MenuPacientes -> Usuario: "✗ El campo 'DNI' no puede estar vacío."
+else DNI válido
+  ControladorPaciente -> ServicioPaciente: buscarPorDni(dni)
+  ServicioPaciente -> RepositorioPaciente: buscarPorDni(dni)
+
+  alt paciente encontrado
+    RepositorioPaciente --> ServicioPaciente: Paciente
+    ServicioPaciente --> ControladorPaciente: Paciente
+    ControladorPaciente --> MenuPacientes: Paciente
+    MenuPacientes -> Usuario: muestra datos del paciente
+  else DNI no registrado
+    RepositorioPaciente --> ServicioPaciente: null
+    ServicioPaciente --> ControladorPaciente: throws PacienteNoEncontradoException
+    ControladorPaciente --> MenuPacientes: throws exception
+    MenuPacientes -> Usuario: "✗ No se encontró paciente con DNI: X"
+  end
+end
+
+@enduml

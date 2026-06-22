@@ -1,0 +1,116 @@
+package clinicasonrisafeliz.controlador;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+import clinicasonrisafeliz.enums.EstadoTurno;
+import clinicasonrisafeliz.excepcion.DatoInvalidoException;
+import clinicasonrisafeliz.modelo.Odontologo;
+import clinicasonrisafeliz.modelo.Paciente;
+import clinicasonrisafeliz.modelo.Recepcionista;
+import clinicasonrisafeliz.modelo.Turno;
+import clinicasonrisafeliz.servicio.ServicioOdontologo;
+import clinicasonrisafeliz.servicio.ServicioPaciente;
+import clinicasonrisafeliz.servicio.ServicioTurno;
+
+public class ControladorTurno {
+
+    private final ServicioTurno      servicioTurno;
+    private final ServicioPaciente   servicioPaciente;
+    private final ServicioOdontologo servicioOdontologo;
+
+    public ControladorTurno(ServicioTurno servicioTurno, ServicioPaciente servicioPaciente, ServicioOdontologo servicioOdontologo) {
+        this.servicioTurno      = servicioTurno;
+        this.servicioPaciente   = servicioPaciente;
+        this.servicioOdontologo = servicioOdontologo;
+    }
+
+    public Turno reservar(Long pacienteId, Long odontologoId, LocalDate fecha, LocalTime hora, Recepcionista recepcionista) {
+        validarId(pacienteId, "paciente");
+        validarId(odontologoId, "odontólogo");
+        if (fecha == null)          throw new DatoInvalidoException("La fecha del turno no puede ser nula.");
+        if (hora  == null)          throw new DatoInvalidoException("La hora del turno no puede ser nula.");
+        if (recepcionista == null)  throw new DatoInvalidoException("El recepcionista no puede ser nulo.");
+        Paciente   paciente   = servicioPaciente.buscarPorId(pacienteId);
+        Odontologo odontologo = servicioOdontologo.buscarPorId(odontologoId);
+        return servicioTurno.reservar(paciente, odontologo, fecha, hora, recepcionista);
+    }
+
+    public Turno buscarPorId(Long id) {
+        validarId(id, "turno");
+        return servicioTurno.buscarPorId(id);
+    }
+
+    public Paciente buscarPacientePorId(Long id) {
+        validarId(id, "paciente");
+        return servicioPaciente.buscarPorId(id);
+    }
+
+    public Odontologo buscarOdontologoPorId(Long id) {
+        validarId(id, "odontólogo");
+        return servicioOdontologo.buscarPorId(id);
+    }
+
+    public void confirmar(Long turnoId) {
+        validarId(turnoId, "turno");
+        servicioTurno.confirmar(turnoId);
+    }
+
+    public void cancelar(Long turnoId) {
+        validarId(turnoId, "turno");
+        servicioTurno.cancelar(turnoId);
+    }
+
+    public void completar(Long turnoId) {
+        validarId(turnoId, "turno");
+        servicioTurno.completar(turnoId);
+    }
+
+    public void modificar(Long turnoId, LocalDate nuevaFecha, LocalTime nuevaHora) {
+        validarId(turnoId, "turno");
+        if (nuevaFecha == null) throw new DatoInvalidoException("La nueva fecha no puede ser nula.");
+        if (nuevaHora  == null) throw new DatoInvalidoException("La nueva hora no puede ser nula.");
+        servicioTurno.modificar(turnoId, nuevaFecha, nuevaHora);
+    }
+
+    public List<Turno> listarTodos() {
+        return servicioTurno.listarTodos();
+    }
+
+    public List<Turno> listarPorPaciente(Long pacienteId) {
+        validarId(pacienteId, "paciente");
+        servicioPaciente.buscarPorId(pacienteId); // valida existencia
+        return servicioTurno.listarPorPaciente(pacienteId);
+    }
+
+    public List<Turno> listarPorOdontologo(Long odontologoId) {
+        validarId(odontologoId, "odontólogo");
+        servicioOdontologo.buscarPorId(odontologoId); // valida existencia
+        return servicioTurno.listarPorOdontologo(odontologoId);
+    }
+
+    public List<Turno> listarPorFecha(LocalDate fecha) {
+        if (fecha == null) throw new DatoInvalidoException("La fecha de búsqueda no puede ser nula.");
+        return servicioTurno.listarPorFecha(fecha);
+    }
+
+    public List<Turno> listarPorEstado(EstadoTurno estado) {
+        if (estado == null) throw new DatoInvalidoException("El estado no puede ser nulo.");
+        return servicioTurno.listarPorEstado(estado);
+    }
+
+    public List<Turno> listarPorRangoDeFechas(LocalDate desde, LocalDate hasta) {
+        if (desde == null) throw new DatoInvalidoException("La fecha de inicio no puede ser nula.");
+        if (hasta == null) throw new DatoInvalidoException("La fecha de fin no puede ser nula.");
+        return servicioTurno.listarPorRangoDeFechas(desde, hasta);
+    }
+
+    // ── Validaciones ─────────────────────────────────────────────────────────
+
+    private void validarId(Long id, String entidad) {
+        if (id == null || id <= 0) {
+            throw new DatoInvalidoException("El ID de " + entidad + " debe ser un número positivo.");
+        }
+    }
+}
