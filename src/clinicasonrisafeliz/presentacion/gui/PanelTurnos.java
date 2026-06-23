@@ -2,6 +2,7 @@ package clinicasonrisafeliz.presentacion.gui;
 
 import clinicasonrisafeliz.controlador.ControladorOdontologo;
 import clinicasonrisafeliz.controlador.ControladorPaciente;
+import clinicasonrisafeliz.controlador.ControladorRecepcionista;
 import clinicasonrisafeliz.controlador.ControladorTurno;
 import clinicasonrisafeliz.enums.EstadoTurno;
 import clinicasonrisafeliz.modelo.Odontologo;
@@ -27,6 +28,7 @@ public class PanelTurnos extends JPanel {
     private final ControladorTurno controladorTurno;
     private final ControladorPaciente controladorPaciente;
     private final ControladorOdontologo controladorOdontologo;
+    private final ControladorRecepcionista controladorRecepcionista;
     private final Recepcionista operador;
     private final ModeloTablaTurnos modeloTabla;
     private JTable tabla;
@@ -36,12 +38,13 @@ public class PanelTurnos extends JPanel {
     private JSpinner spinFecha;
     private JComboBox<String> comboHora;
     private JTextField txtId;
-    private JButton btnReservar, btnModificar, btnConfirmar, btnCancelar, btnLimpiar;
+    private JButton btnReservar, btnModificar, btnConfirmar, btnCancelar, btnCompletar, btnLimpiar;
 
-    public PanelTurnos(ControladorTurno ctrlTurno, ControladorPaciente ctrlPac, ControladorOdontologo ctrlOdon, Recepcionista operador) {
+    public PanelTurnos(ControladorTurno ctrlTurno, ControladorPaciente ctrlPac, ControladorOdontologo ctrlOdon, ControladorRecepcionista ctrlRec, Recepcionista operador) {
         this.controladorTurno = ctrlTurno;
         this.controladorPaciente = ctrlPac;
         this.controladorOdontologo = ctrlOdon;
+        this.controladorRecepcionista = ctrlRec;
         this.operador = operador;
         this.modeloTabla = new ModeloTablaTurnos();
         initComponents();
@@ -147,14 +150,21 @@ public class PanelTurnos extends JPanel {
         btnCancelar.setForeground(Color.WHITE);
         btnCancelar.setFocusPainted(false);
 
+        btnCompletar = new JButton("Completar Turno");
+        btnCompletar.setBackground(new Color(92, 184, 92)); // Verde
+        btnCompletar.setForeground(Color.WHITE);
+        btnCompletar.setFocusPainted(false);
+
         btnLimpiar.addActionListener(e -> limpiarFormulario());
         btnReservar.addActionListener(e -> reservarTurno());
         btnModificar.addActionListener(e -> modificarTurno());
         btnConfirmar.addActionListener(e -> confirmarTurno());
         btnCancelar.addActionListener(e -> cancelarTurno());
+        btnCompletar.addActionListener(e -> completarTurno());
 
         panelBotones.add(btnLimpiar);
         panelBotones.add(btnCancelar);
+        panelBotones.add(btnCompletar);
         panelBotones.add(btnConfirmar);
         panelBotones.add(btnModificar);
         panelBotones.add(btnReservar);
@@ -232,6 +242,13 @@ public class PanelTurnos extends JPanel {
 
     private void reservarTurno() {
         resetBorders();
+
+        if (!controladorRecepcionista.hayRecepcionistas()) {
+            JOptionPane.showMessageDialog(this, "No hay recepcionistas registrados. No se pueden reservar turnos sin un recepcionista.",
+                "Operación no permitida", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         Paciente p = (Paciente) comboPacientes.getSelectedItem();
         Odontologo o = (Odontologo) comboOdontologos.getSelectedItem();
 
@@ -279,6 +296,31 @@ public class PanelTurnos extends JPanel {
 
     private void cancelarTurno() {
         cambiarEstado("cancelar");
+    }
+
+    private void completarTurno() {
+        String idStr = txtId.getText();
+        if (idStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un turno.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            Turno turno = controladorTurno.buscarPorId(Long.parseLong(idStr));
+            if (!turno.getEstado().equals(EstadoTurno.CONFIRMADO)) {
+                JOptionPane.showMessageDialog(this, "Solo se pueden completar turnos confirmados. Estado actual: " + turno.getEstado(),
+                    "Operación inválida", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int confirm = JOptionPane.showConfirmDialog(this, "¿Completar este turno?", "Confirmar", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                controladorTurno.completar(Long.parseLong(idStr));
+                JOptionPane.showMessageDialog(this, "Turno completado exitosamente.");
+                limpiarFormulario();
+                cargarDatosFondo();
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void cambiarEstado(String accion) {

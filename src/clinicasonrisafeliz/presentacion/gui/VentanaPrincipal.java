@@ -2,6 +2,7 @@ package clinicasonrisafeliz.presentacion.gui;
 
 import clinicasonrisafeliz.controlador.ControladorOdontologo;
 import clinicasonrisafeliz.controlador.ControladorPaciente;
+import clinicasonrisafeliz.controlador.ControladorRecepcionista;
 import clinicasonrisafeliz.controlador.ControladorTurno;
 import clinicasonrisafeliz.io.PersistenciaCSV;
 import clinicasonrisafeliz.modelo.Recepcionista;
@@ -19,6 +20,7 @@ public class VentanaPrincipal extends JFrame {
     private final ControladorPaciente controladorPaciente;
     private final ControladorOdontologo controladorOdontologo;
     private final ControladorTurno controladorTurno;
+    private final ControladorRecepcionista controladorRecepcionista;
     private final Recepcionista operador;
 
     private JPanel panelCentral;
@@ -29,11 +31,12 @@ public class VentanaPrincipal extends JFrame {
     private PanelTurnos panelTurnos;
     private PanelBusquedas panelBusquedas;
 
-    public VentanaPrincipal(ControladorPaciente cPac, ControladorOdontologo cOdon, ControladorTurno cTurno, Recepcionista operador) {
+    public VentanaPrincipal(ControladorPaciente cPac, ControladorOdontologo cOdon, ControladorTurno cTurno, ControladorRecepcionista cRec, Recepcionista operador) {
         super("Clínica Sonrisa Feliz - Sistema de Gestión");
         this.controladorPaciente = cPac;
         this.controladorOdontologo = cOdon;
         this.controladorTurno = cTurno;
+        this.controladorRecepcionista = cRec;
         this.operador = operador;
         
         initComponents();
@@ -94,7 +97,7 @@ public class VentanaPrincipal extends JFrame {
 
         panelPacientes = new PanelPacientes(controladorPaciente);
         panelOdontologos = new PanelOdontologos(controladorOdontologo);
-        panelTurnos = new PanelTurnos(controladorTurno, controladorPaciente, controladorOdontologo, operador);
+        panelTurnos = new PanelTurnos(controladorTurno, controladorPaciente, controladorOdontologo, controladorRecepcionista, operador);
         panelBusquedas = new PanelBusquedas(controladorTurno, controladorPaciente, controladorOdontologo);
 
         panelCentral.add(crearPanelBienvenida(), "BIENVENIDA");

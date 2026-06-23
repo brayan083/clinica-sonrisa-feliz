@@ -106,6 +106,7 @@ public class Main {
                         controladorPaciente,
                         controladorOdontologo,
                         controladorTurno,
+                        controladorRecepcionista,
                         operador
                 );
                 ventana.setVisible(true);
