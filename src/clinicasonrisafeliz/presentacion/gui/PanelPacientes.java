@@ -188,8 +188,10 @@ public class PanelPacientes extends JPanel {
                 controlador.registrar(nombre, apellido, email, dni, dom);
                 JOptionPane.showMessageDialog(this, "Paciente registrado con éxito.");
             } else {
-                // Actualizar (solo nombre, apellido y email según controlador actual)
-                controlador.actualizar(Long.parseLong(idStr), nombre, apellido, email);
+                // Actualizar
+                controlador.actualizar(Long.parseLong(idStr), nombre, apellido, email,
+                        txtCalle.getText().trim(), txtNumero.getText().trim(),
+                        txtLocalidad.getText().trim(), txtProvincia.getText().trim());
                 JOptionPane.showMessageDialog(this, "Paciente actualizado con éxito.");
             }
             limpiarFormulario();

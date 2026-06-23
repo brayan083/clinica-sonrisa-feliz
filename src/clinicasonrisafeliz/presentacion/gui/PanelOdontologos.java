@@ -114,6 +114,7 @@ public class PanelOdontologos extends JPanel {
         txtNombre.setText(o.getNombre());
         txtApellido.setText(o.getApellido());
         txtMatricula.setText(o.getMatricula());
+        txtMatricula.setEditable(false);
         txtEmail.setText(o.getEmail());
     }
 
@@ -122,6 +123,7 @@ public class PanelOdontologos extends JPanel {
         txtNombre.setText("");
         txtApellido.setText("");
         txtMatricula.setText("");
+        txtMatricula.setEditable(true);
         txtEmail.setText("");
         tabla.clearSelection();
         resetBorders();

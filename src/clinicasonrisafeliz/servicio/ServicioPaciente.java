@@ -64,11 +64,18 @@ public class ServicioPaciente {
                 .collect(Collectors.toList());
     }
 
-    public void actualizar(Long id, String nombre, String apellido, String email) {
+    public void actualizar(Long id, String nombre, String apellido, String email,
+                           String calle, String numero, String localidad, String provincia) {
         Paciente paciente = buscarPorId(id);
         paciente.setNombre(nombre);
         paciente.setApellido(apellido);
         paciente.setEmail(email);
+        if (paciente.getDomicilio() != null) {
+            paciente.getDomicilio().setCalle(calle);
+            paciente.getDomicilio().setNumero(numero);
+            paciente.getDomicilio().setLocalidad(localidad);
+            paciente.getDomicilio().setProvincia(provincia);
+        }
         repositorioPaciente.actualizar(paciente);
     }
 

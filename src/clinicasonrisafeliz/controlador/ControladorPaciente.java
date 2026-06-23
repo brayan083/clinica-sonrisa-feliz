@@ -52,12 +52,13 @@ public class ControladorPaciente {
         return servicioPaciente.buscarPorApellido(apellido);
     }
 
-    public void actualizar(Long id, String nombre, String apellido, String email) {
+    public void actualizar(Long id, String nombre, String apellido, String email,
+                           String calle, String numero, String localidad, String provincia) {
         validarId(id, "paciente");
         validarTexto(nombre, "nombre");
         validarTexto(apellido, "apellido");
         validarEmail(email);
-        servicioPaciente.actualizar(id, nombre, apellido, email);
+        servicioPaciente.actualizar(id, nombre, apellido, email, calle, numero, localidad, provincia);
     }
 
     public void eliminar(Long id) {

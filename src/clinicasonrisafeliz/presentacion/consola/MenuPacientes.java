@@ -125,7 +125,12 @@ public class MenuPacientes {
         String apellido = utils.leerTextoOpcional("Nuevo apellido [" + p.getApellido() + "]: ", p.getApellido());
         String email    = utils.leerEmailOpcional("Nuevo email [" + p.getEmail() + "]: ", p.getEmail());
         try {
-            controladorPaciente.actualizar(id, nombre, apellido, email);
+            Domicilio dom = p.getDomicilio();
+            String calle    = dom != null ? dom.getCalle()     : "";
+            String numero   = dom != null ? dom.getNumero()    : "";
+            String localidad = dom != null ? dom.getLocalidad() : "";
+            String provincia = dom != null ? dom.getProvincia() : "";
+            controladorPaciente.actualizar(id, nombre, apellido, email, calle, numero, localidad, provincia);
             System.out.println("✓ Paciente actualizado.");
         } catch (Exception e) {
             System.out.println("✗ " + e.getMessage());
