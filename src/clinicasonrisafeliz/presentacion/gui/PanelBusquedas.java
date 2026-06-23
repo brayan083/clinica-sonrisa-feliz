@@ -48,8 +48,8 @@ public class PanelBusquedas extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Panel superior para criterios
-        JPanel panelCriterios = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panelCriterios = new JPanel();
+        panelCriterios.setLayout(new BoxLayout(panelCriterios, BoxLayout.Y_AXIS));
         panelCriterios.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), "Criterios de Búsqueda", TitledBorder.LEFT, TitledBorder.TOP));
 
@@ -63,26 +63,31 @@ public class PanelBusquedas extends JPanel {
                 "Turnos por Odontólogo (ID)"
         });
         comboCriterio.addActionListener(e -> cambiarInputs());
-        
-        panelInputs = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        JPanel filaCombo = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
+        filaCombo.add(new JLabel("Buscar:"));
+        filaCombo.add(comboCriterio);
+
+        panelInputs = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
         txtValor1 = new JTextField(15);
         txtValor2 = new JTextField(15);
-        
+
         JButton btnBuscar = new JButton("Buscar");
         btnBuscar.addActionListener(e -> realizarBusqueda());
 
-        panelCriterios.add(new JLabel("Buscar:"));
-        panelCriterios.add(comboCriterio);
-        panelCriterios.add(panelInputs);
-        panelCriterios.add(btnBuscar);
+        JPanel filaInputs = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
+        filaInputs.add(panelInputs);
+        filaInputs.add(btnBuscar);
+
+        panelCriterios.add(filaCombo);
+        panelCriterios.add(filaInputs);
 
         add(panelCriterios, BorderLayout.NORTH);
 
-        // Tabla de resultados
-        tablaResultados = new JTable(modeloTurnos); // default
+        tablaResultados = new JTable(modeloTurnos);
         add(new JScrollPane(tablaResultados), BorderLayout.CENTER);
 
-        cambiarInputs(); // inicializar
+        cambiarInputs();
     }
 
     private void cambiarInputs() {
