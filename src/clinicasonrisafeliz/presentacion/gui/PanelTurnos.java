@@ -1,5 +1,39 @@
 package clinicasonrisafeliz.presentacion.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
+import javax.swing.border.TitledBorder;
+
 import clinicasonrisafeliz.controlador.ControladorOdontologo;
 import clinicasonrisafeliz.controlador.ControladorPaciente;
 import clinicasonrisafeliz.controlador.ControladorRecepcionista;
@@ -10,18 +44,6 @@ import clinicasonrisafeliz.modelo.Paciente;
 import clinicasonrisafeliz.modelo.Recepcionista;
 import clinicasonrisafeliz.modelo.Turno;
 import clinicasonrisafeliz.presentacion.gui.modelos.ModeloTablaTurnos;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
-import java.util.Date;
-import java.util.List;
 
 public class PanelTurnos extends JPanel {
 
@@ -38,7 +60,7 @@ public class PanelTurnos extends JPanel {
     private JSpinner spinFecha;
     private JComboBox<String> comboHora;
     private JTextField txtId;
-    private JButton btnReservar, btnModificar, btnConfirmar, btnCancelar, btnCompletar, btnLimpiar;
+    private JButton btnReservar, btnModificar, btnConfirmar, btnCancelar, btnCompletar, btnLimpiar, btnExitoso;
 
     public PanelTurnos(ControladorTurno ctrlTurno, ControladorPaciente ctrlPac, ControladorOdontologo ctrlOdon, ControladorRecepcionista ctrlRec, Recepcionista operador) {
         this.controladorTurno = ctrlTurno;
@@ -155,12 +177,20 @@ public class PanelTurnos extends JPanel {
         btnCompletar.setForeground(Color.WHITE);
         btnCompletar.setFocusPainted(false);
 
+        btnExitoso = new JButton("Exitoso");
+        btnCompletar.setBackground(new Color(92, 184, 92)); // Verde
+        btnCompletar.setForeground(Color.WHITE);
+        btnCompletar.setFocusPainted(false);
+
+
+
         btnLimpiar.addActionListener(e -> limpiarFormulario());
         btnReservar.addActionListener(e -> reservarTurno());
         btnModificar.addActionListener(e -> modificarTurno());
         btnConfirmar.addActionListener(e -> confirmarTurno());
         btnCancelar.addActionListener(e -> cancelarTurno());
         btnCompletar.addActionListener(e -> completarTurno());
+        btnExitoso.addActionListener(e -> completarTurno());
 
         panelBotones.add(btnLimpiar);
         panelBotones.add(btnCancelar);
@@ -168,6 +198,7 @@ public class PanelTurnos extends JPanel {
         panelBotones.add(btnConfirmar);
         panelBotones.add(btnModificar);
         panelBotones.add(btnReservar);
+        panelBotones.add(btnExitoso);
 
         gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 4;
         panelFormulario.add(panelBotones, gbc);
